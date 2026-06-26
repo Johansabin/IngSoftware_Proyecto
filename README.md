@@ -20,7 +20,7 @@ Brindar una herramienta digital que ayude a los estudiantes a monitorear su esta
 
 ### Diagrama de Casos de Uso
 
-> ⏳ Pendiente de incorporar.
+![Diagrama de casos de uso](docs/uml/casos-uso.png)
 
 ### Prototipo / GUI
 
