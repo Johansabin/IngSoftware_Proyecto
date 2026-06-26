@@ -44,7 +44,7 @@ El tablero combina **User Story Mapping** (columnas por épica funcional) con el
 
 | Tarjeta | Subtareas | Estado |
 |---|---|---|
-| ✅ Construir núcleo de la app | — | Completada |
+| Construir núcleo de la app | — | Completada |
 | HF.1.1 Registrar estado emocional | 0/5 | Pendiente |
 | HF.1.2 Seleccionar emociones rápidas | 0/4 | Pendiente |
 | RNF.1 Autenticación segura | 0/4 | Pendiente |
