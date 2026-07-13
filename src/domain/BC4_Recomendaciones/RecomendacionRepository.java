@@ -1,31 +1,15 @@
 package BC4_Recomendaciones;
 
-import java.io.*;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
-/**
- * 
- */
 public interface RecomendacionRepository {
 
-    /**
-     * @param recomendacion
-     */
-    public void guardar(Recomendacion recomendacion);
+    void guardar(Recomendacion recomendacion);
 
-    /**
-     * @param tipo
-     */
-    public void buscarPorTipo(String tipo);
+    void eliminar(UUID id);
 
-    /**
-     * 
-     */
-    public void listarTodas();
+    List<Recomendacion> listarTodas();
 
-    /**
-     * @param id
-     */
-    public void eliminar(UUID id);
-
+    List<Recomendacion> buscarPorTipo(String tipo);
 }
