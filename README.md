@@ -55,3 +55,34 @@ El prototipo de interfaz se encuentra en:
 El tablero de gestión del proyecto se documentará en:
 
 - docs/trello.md
+
+## Convenciones de Codificación - BC3 Soporte Chat
+
+Responsable: Johansabina  
+Bounded Context: BC3_SoporteChat
+
+En la implementación del soporte por chat se aplicaron las siguientes convenciones de Java:
+
+- Clases e interfaces en `UpperCamelCase`: `ChatSession`, `Message`, `ChatSessionRepository`.
+- Métodos y atributos en `lowerCamelCase`: `sendMessage`, `psychologistId`, `createdAt`.
+- Constantes de enumeraciones en mayúsculas: `ACTIVE`, `CLOSED`, `STUDENT`, `PSYCHOLOGIST`.
+- Encapsulamiento de atributos con `private`.
+- Validación de referencias obligatorias con `Objects.requireNonNull`.
+- Uso de `enum` para evitar strings mágicos en estados y roles.
+- Exposición controlada de colecciones con `Collections.unmodifiableList`.
+
+Fragmento aplicado en `ChatSession`:
+
+```java
+public void sendMessage(Message message) {
+    Objects.requireNonNull(message, "The message is required");
+
+    if (status == ChatSessionStatus.CLOSED) {
+        throw new IllegalStateException("Cannot send messages to a closed chat session");
+    }
+
+    messages.add(message);
+}
+```
+
+La práctica aplicada es mantener la regla de negocio dentro del agregado `ChatSession`, evitando que una sesión cerrada reciba nuevos mensajes.
