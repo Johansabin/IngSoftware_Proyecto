@@ -1,42 +1,44 @@
 package BC4_Recomendaciones;
 
-import java.io.*;
-import java.util.*;
+import java.util.UUID;
+import comun.DatosAuditoria;
 
 /**
- * 
+ * Aggregate Root del bounded context de Recomendaciones.
  */
 public class Recomendacion {
 
-    /**
-     * Default constructor
-     */
-    public Recomendacion() {
+    private final UUID id;
+    private final String titulo;
+    private final String contenido;
+    private final String tipo;
+    private final DatosAuditoria auditoria;
+
+    public Recomendacion(String titulo, String contenido, String tipo) {
+        this.id = UUID.randomUUID();
+        this.titulo = titulo;
+        this.contenido = contenido;
+        this.tipo = tipo;
+        this.auditoria = new DatosAuditoria();
     }
 
-    /**
-     * 
-     */
-    private UUID id;
+    public UUID getId() {
+        return id;
+    }
 
-    /**
-     * 
-     */
-    private String titulo;
+    public String getTitulo() {
+        return titulo;
+    }
 
-    /**
-     * 
-     */
-    private String contenido;
+    public String getContenido() {
+        return contenido;
+    }
 
-    /**
-     * 
-     */
-    private String tipo;
+    public String getTipo() {
+        return tipo;
+    }
 
-    /**
-     * 
-     */
-    private DatosAuditoria auditoria;
-
+    public DatosAuditoria getAuditoria() {
+        return auditoria;
+    }
 }
