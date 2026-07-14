@@ -1,31 +1,33 @@
 package BC1_Autenticacion;
 
-import java.io.*;
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
- * 
+ * Puerto de interfaz para persistir y buscar sesiones en la base de datos.
  */
 public interface SesionRepository {
 
     /**
-     * @param sesion
+     * Guarda el estado de una sesion.
+     *
+     * @param sesion Objeto sesion a guardar.
      */
-    public void guardar(Sesion sesion);
+    void guardar(Sesion sesion);
 
     /**
-     * @param id
+     * Busca una sesion por su identificador unico.
+     *
+     * @param id Identificador unico de la sesion.
+     * @return Un contenedor Optional con la sesion si es encontrada.
      */
-    public void buscarPorId(UUID id);
+    Optional<Sesion> buscarPorId(UUID id);
 
     /**
-     * @param codigoUniversitario
+     * Busca la sesion activa mas reciente asociada a un codigo de usuario.
+     *
+     * @param codigoUsuario Codigo universitario.
+     * @return Un contenedor Optional con la sesion si existe y esta activa.
      */
-    public void buscarActiva(String codigoUniversitario);
-
-    /**
-     * @param id
-     */
-    public void eliminar(UUID id);
-
+    Optional<Sesion> buscarActivaPorCodigo(String codigoUsuario);
 }

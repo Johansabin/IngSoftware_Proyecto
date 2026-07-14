@@ -1,27 +1,30 @@
 package BC1_Autenticacion;
 
-import java.io.*;
-import java.util.*;
+import java.time.LocalDateTime;
 
 /**
- * 
+ * Objeto de valor para el registro de auditoria de los inicios de sesion.
  */
 public class DatosAuditoria {
 
+    private final String ipOrigen;
+    private final LocalDateTime fechaRegistro;
+
     /**
-     * Default constructor
+     * Constructor que registra los detalles de auditoria.
+     *
+     * @param ipOrigen Direccion IP del dispositivo.
      */
-    public DatosAuditoria() {
+    public DatosAuditoria(String ipOrigen) {
+        this.ipOrigen = ipOrigen;
+        this.fechaRegistro = LocalDateTime.now();
     }
 
-    /**
-     * 
-     */
-    private LocalDateTime creadoEn;
+    public String getIpOrigen() {
+        return ipOrigen;
+    }
 
-    /**
-     * 
-     */
-    private LocalDateTime actualizadoEn;
-
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
 }
