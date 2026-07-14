@@ -1,27 +1,29 @@
 package BC1_Autenticacion;
 
-import java.io.*;
-import java.util.*;
-
 /**
- * 
+ * Objeto de valor que representa las credenciales de acceso de un estudiante.
  */
 public class CredencialesInstitucionales {
 
+    private final String codigoUniversitario;
+    private final String hashContrasena;
+
     /**
-     * Default constructor
+     * Constructor con parametros de las credenciales.
+     *
+     * @param codigoUniversitario Codigo de estudiante.
+     * @param hashContrasena Contrasena encriptada o hasheada.
      */
-    public CredencialesInstitucionales() {
+    public CredencialesInstitucionales(String codigoUniversitario, String hashContrasena) {
+        this.codigoUniversitario = codigoUniversitario;
+        this.hashContrasena = hashContrasena;
     }
 
-    /**
-     * 
-     */
-    private String codigoUniversitario;
+    public String getCodigoUniversitario() {
+        return codigoUniversitario;
+    }
 
-    /**
-     * 
-     */
-    private String hashContrasena;
-
+    public String getHashContrasena() {
+        return hashContrasena;
+    }
 }

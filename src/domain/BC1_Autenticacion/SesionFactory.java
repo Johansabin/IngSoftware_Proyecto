@@ -1,24 +1,17 @@
 package BC1_Autenticacion;
 
-import java.io.*;
-import java.util.*;
-
 /**
- * 
+ * Fabrica encargada de instanciar objetos Sesion de manera controlada.
  */
 public class SesionFactory {
 
     /**
-     * Default constructor
+     * Crea una nueva instancia de Sesion inicializada.
+     *
+     * @param codigoUsuario Codigo del usuario que inicia sesion.
+     * @return Una nueva instancia de Sesion.
      */
-    public SesionFactory() {
+    public static Sesion registrarSesion(String codigoUsuario) {
+        return new Sesion(codigoUsuario);
     }
-
-    /**
-     * @param credenciales
-     */
-    public static void crear(CredencialesInstitucionales credenciales) {
-        // TODO implement here
-    }
-
 }
