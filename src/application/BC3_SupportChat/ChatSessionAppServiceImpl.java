@@ -1,18 +1,18 @@
 package application.BC3_SupportChat;
 
-import BC3_SoporteChat.Mensaje;
-import BC3_SoporteChat.SesionChat;
-import BC3_SoporteChat.SesionChatFactory;
-import BC3_SoporteChat.SesionChatRepository;
+import BC3_SoporteChat.ChatSession;
+import BC3_SoporteChat.ChatSessionFactory;
+import BC3_SoporteChat.ChatSessionRepository;
+import BC3_SoporteChat.Message;
 
 import java.util.Objects;
 import java.util.UUID;
 
 public class ChatSessionAppServiceImpl implements ChatSessionAppService {
 
-    private final SesionChatRepository repository;
+    private final ChatSessionRepository repository;
 
-    public ChatSessionAppServiceImpl(SesionChatRepository repository) {
+    public ChatSessionAppServiceImpl(ChatSessionRepository repository) {
         this.repository = Objects.requireNonNull(repository, "El repositorio de chat es obligatorio");
     }
 
@@ -20,8 +20,8 @@ public class ChatSessionAppServiceImpl implements ChatSessionAppService {
     public UUID startChat(StartChatRequest request) {
         Objects.requireNonNull(request, "La solicitud de inicio de chat es obligatoria");
 
-        SesionChat chat = SesionChatFactory.iniciar(request.getPsychologistId());
-        repository.guardar(chat);
+        ChatSession chat = ChatSessionFactory.start(request.getPsychologistId());
+        repository.save(chat);
         return chat.getId();
     }
 
@@ -30,24 +30,24 @@ public class ChatSessionAppServiceImpl implements ChatSessionAppService {
         Objects.requireNonNull(request, "La solicitud de envio de mensaje es obligatoria");
 
         // Flujo de aplicacion: buscar sesion, crear mensaje, actualizar agregado y guardar.
-        SesionChat chat = getChat(request.getChatId());
-        Mensaje message = new Mensaje(request.getContent(), request.getSenderRole());
-        chat.enviarMensaje(message);
-        repository.guardar(chat);
+        ChatSession chat = getChat(request.getChatId());
+        Message message = new Message(request.getContent(), request.getSenderRole());
+        chat.sendMessage(message);
+        repository.save(chat);
     }
 
     @Override
     public void closeChat(UUID chatId) {
-        SesionChat chat = getChat(chatId);
-        chat.cerrar();
-        repository.guardar(chat);
+        ChatSession chat = getChat(chatId);
+        chat.close();
+        repository.save(chat);
     }
 
     @Override
-    public SesionChat getChat(UUID chatId) {
+    public ChatSession getChat(UUID chatId) {
         Objects.requireNonNull(chatId, "El id del chat es obligatorio");
 
-        return repository.buscarPorId(chatId)
+        return repository.findById(chatId)
                 .orElseThrow(() -> new IllegalArgumentException("No existe una sesion de chat con el id indicado"));
     }
 }

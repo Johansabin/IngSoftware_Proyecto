@@ -1,6 +1,6 @@
 package application.BC3_SupportChat;
 
-import BC3_SoporteChat.SesionChat;
+import BC3_SoporteChat.ChatSession;
 
 import java.util.UUID;
 
@@ -12,5 +12,5 @@ public interface ChatSessionAppService {
 
     void closeChat(UUID chatId);
 
-    SesionChat getChat(UUID chatId);
+    ChatSession getChat(UUID chatId);
 }
