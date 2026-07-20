@@ -35,10 +35,7 @@ public class ChatSession {
     }
 
     public void sendMessage(Message message) {
-        if (status == ChatSessionStatus.CLOSED) {
-            throw new IllegalStateException("Cannot send messages to a closed chat session");
-        }
-
+        ensureActive();
         messages.add(Objects.requireNonNull(message, "The message is required"));
         auditData.registerUpdate();
     }
@@ -54,6 +51,16 @@ public class ChatSession {
 
     public boolean isActive() {
         return status == ChatSessionStatus.ACTIVE;
+    }
+
+    public boolean isAssignedTo(UUID psychologistId) {
+        return this.psychologistId.equals(Objects.requireNonNull(psychologistId, "The psychologist is required"));
+    }
+
+    private void ensureActive() {
+        if (status == ChatSessionStatus.CLOSED) {
+            throw new IllegalStateException("Cannot send messages to a closed chat session");
+        }
     }
 
     public UUID getId() {

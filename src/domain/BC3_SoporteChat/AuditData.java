@@ -2,7 +2,7 @@ package BC3_SoporteChat;
 
 import java.time.LocalDateTime;
 
-public class AuditData {
+public final class AuditData {
 
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;

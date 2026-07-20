@@ -3,7 +3,7 @@ package BC3_SoporteChat;
 import java.util.Objects;
 import java.util.UUID;
 
-public class AnonymousPseudonym {
+public final class AnonymousPseudonym {
 
     private static final String ALIAS_PREFIX = "student-";
     private static final int UUID_FRAGMENT_LENGTH = 8;

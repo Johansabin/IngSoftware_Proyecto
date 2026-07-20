@@ -33,11 +33,15 @@ public class InMemoryChatSessionRepository implements ChatSessionRepository {
 
         List<ChatSession> activeSessions = new ArrayList<>();
         for (ChatSession session : sessions.values()) {
-            if (session.isActive() && session.getPsychologistId().equals(psychologistId)) {
+            if (isActiveForPsychologist(session, psychologistId)) {
                 activeSessions.add(session);
             }
         }
 
         return activeSessions;
+    }
+
+    private boolean isActiveForPsychologist(ChatSession session, UUID psychologistId) {
+        return session.isActive() && session.isAssignedTo(psychologistId);
     }
 }

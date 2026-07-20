@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Message {
+public final class Message {
     private static final int MAX_CONTENT_LENGTH = 1000;
 
     private final UUID id;
