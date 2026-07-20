@@ -1,26 +1,15 @@
 package BC3_SoporteChat;
 
-import java.io.*;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-/**
- * 
- */
 public interface SesionChatRepository {
 
-    /**
-     * @param sesionChat
-     */
-    public void guardar(SesionChat sesionChat);
+    void guardar(SesionChat sesionChat);
 
-    /**
-     * @param id
-     */
-    public void buscarPorId(UUID id);
+    Optional<SesionChat> buscarPorId(UUID id);
 
-    /**
-     * @param psicologoId
-     */
-    public void buscarActivasPorPsicologo(UUID psicologoId);
+    List<SesionChat> buscarActivasPorPsicologo(UUID psicologoId);
 
 }

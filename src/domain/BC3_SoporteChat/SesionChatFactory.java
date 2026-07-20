@@ -1,24 +1,16 @@
 package BC3_SoporteChat;
 
-import java.io.*;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
-/**
- * 
- */
 public class SesionChatFactory {
 
-    /**
-     * Default constructor
-     */
-    public SesionChatFactory() {
+    private SesionChatFactory() {
     }
 
-    /**
-     * @param psicologoId
-     */
-    public static void iniciar(UUID psicologoId) {
-        // TODO implement here
+    public static SesionChat iniciar(UUID psicologoId) {
+        Objects.requireNonNull(psicologoId, "El id del psicologo es obligatorio");
+        return new SesionChat(SeudonimoAnonimo.generar(), psicologoId);
     }
 
 }
