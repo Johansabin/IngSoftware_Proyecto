@@ -46,13 +46,9 @@ public class RecomendacionRepositoryImpl implements RecomendacionRepository {
 
     @Override
     public List<Recomendacion> buscarPorTipo(String tipo) {
-        // SELECT * FROM tabla WHERE tipo = ?
-        List<Recomendacion> filas = new ArrayList<>();
-        for (Recomendacion fila : tabla.values()) {
-            if (fila.esDelTipo(tipo)) {
-                filas.add(fila);
-            }
-        }
-        return filas;
+        // Estilo Pipeline: Datos que fluyen a través de una tubería de funciones
+        return tabla.values().stream()
+                .filter(fila -> fila.esDelTipo(tipo))
+                .toList(); 
     }
 }
