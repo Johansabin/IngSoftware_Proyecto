@@ -3,9 +3,6 @@ package BC4_Recomendaciones;
 import java.util.UUID;
 import comun.DatosAuditoria;
 
-/**
- * Aggregate Root del bounded context de Recomendaciones.
- */
 public class Recomendacion {
 
     private final UUID id;
@@ -22,23 +19,14 @@ public class Recomendacion {
         this.auditoria = new DatosAuditoria();
     }
 
-    public UUID getId() {
-        return id;
+    // Clean Code: Función pequeña con una sola responsabilidad
+    public boolean esDelTipo(String tipo) {
+        return this.tipo != null && this.tipo.equalsIgnoreCase(tipo);
     }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getContenido() {
-        return contenido;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public DatosAuditoria getAuditoria() {
-        return auditoria;
-    }
+    public UUID getId() { return id; }
+    public String getTitulo() { return titulo; }
+    public String getContenido() { return contenido; }
+    public String getTipo() { return tipo; }
+    public DatosAuditoria getAuditoria() { return auditoria; }
 }
