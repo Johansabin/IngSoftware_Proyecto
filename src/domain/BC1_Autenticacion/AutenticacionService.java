@@ -53,4 +53,23 @@ public class AutenticacionService {
             sesionRepository.guardar(sesion);
         }
     }
+
+    /**
+     * Aplica el estilo Pipeline (Stream API) para filtrar sesiones activas.
+     *
+     * @param listaSesiones Lista general de sesiones.
+     * @param codigoUsuario Código de usuario a buscar.
+     * @return Lista filtrada de sesiones activas del usuario.
+     */
+    public java.util.List<Sesion> obtenerSesionesActivasPorUsuario(java.util.List<Sesion> listaSesiones, String codigoUsuario) {
+        if (listaSesiones == null || codigoUsuario == null) {
+            return java.util.Collections.emptyList();
+        }
+        return listaSesiones.stream()
+                .filter(Sesion::isActiva)
+                .filter(s -> s.getCodigoUsuario().equals(codigoUsuario))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+
 }
