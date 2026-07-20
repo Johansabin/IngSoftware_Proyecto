@@ -1,25 +1,31 @@
-package BC2_Seguimiento-Emocional;
+package BC2_SeguimientoEmocional;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
- * Value Object de solo lectura: resultado del análisis semanal de un estudiante.
- * No tiene setters porque representa un resultado calculado en un momento dado,
- * no una entidad que deba mutar.
+ * Resultado agregado del analisis emocional de una semana especifica.
+ *
+ * <p>Estilo de programacion aplicado: <b>Things</b>. Es un valor inmutable
+ * que se valida en construccion; no expone setters ni permite estados
+ * invalidos una vez creado.</p>
  */
-public final class ResumenSemanal {
+public class ResumenSemanal {
 
     private final double promedioEstres;
     private final int diasDePaz;
     private final LocalDate semanaInicio;
 
     public ResumenSemanal(double promedioEstres, int diasDePaz, LocalDate semanaInicio) {
-        if (semanaInicio == null) {
-            throw new IllegalArgumentException("semanaInicio es obligatorio");
+        if (promedioEstres < 0) {
+            throw new IllegalArgumentException("El promedio de estres no puede ser negativo");
+        }
+        if (diasDePaz < 0) {
+            throw new IllegalArgumentException("Los dias de paz no pueden ser negativos");
         }
         this.promedioEstres = promedioEstres;
         this.diasDePaz = diasDePaz;
-        this.semanaInicio = semanaInicio;
+        this.semanaInicio = Objects.requireNonNull(semanaInicio, "La semana de inicio es obligatoria");
     }
 
     public double getPromedioEstres() {
@@ -35,9 +41,26 @@ public final class ResumenSemanal {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ResumenSemanal)) {
+            return false;
+        }
+        ResumenSemanal that = (ResumenSemanal) obj;
+        return semanaInicio.equals(that.semanaInicio);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(semanaInicio);
+    }
+
+    @Override
     public String toString() {
         return "ResumenSemanal{semanaInicio=" + semanaInicio
-                + ", promedioEstres=" + promedioEstres
-                + ", diasDePaz=" + diasDePaz + "}";
+            + ", promedioEstres=" + promedioEstres
+            + ", diasDePaz=" + diasDePaz + "}";
     }
 }

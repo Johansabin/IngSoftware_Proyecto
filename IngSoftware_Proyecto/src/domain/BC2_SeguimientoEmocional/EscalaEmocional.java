@@ -1,50 +1,52 @@
-package BC2_Seguimiento-Emocional;
+package BC2_SeguimientoEmocional;
+
+import java.util.Objects;
 
 /**
- * Value Object que representa la intensidad de una emoción en una escala de 1 a 10,
- * junto con la categoría derivada de ese valor (BAJO, MEDIO, ALTO).
+ * Representa la intensidad de una emocion registrada por un estudiante.
  *
- * Es inmutable: una vez creado, su estado no cambia (evita bugs de mutación compartida).
+ * <p>Estilo de programacion aplicado: <b>Things</b>. La categoria se deriva
+ * internamente a partir del valor y nunca se expone como un dato mutable
+ * independiente; toda interaccion con el objeto ocurre a traves de sus
+ * metodos publicos (el dato nunca se accede ni se decide "desde afuera").</p>
  */
-public final class EscalaEmocional {
+public class EscalaEmocional {
 
     private static final int VALOR_MINIMO = 1;
     private static final int VALOR_MAXIMO = 10;
-    private static final int LIMITE_CATEGORIA_BAJO = 3;
-    private static final int LIMITE_CATEGORIA_MEDIO = 7;
+    private static final int LIMITE_BAJO = 3;
+    private static final int LIMITE_MEDIO = 7;
+
+    private static final String CATEGORIA_BAJO = "BAJO";
+    private static final String CATEGORIA_MEDIO = "MEDIO";
+    private static final String CATEGORIA_ALTO = "ALTO";
 
     private final int valor;
     private final String categoria;
 
-    private EscalaEmocional(int valor, String categoria) {
-        this.valor = valor;
-        this.categoria = categoria;
-    }
-
     /**
-     * Crea una escala emocional a partir de un valor numérico, derivando automáticamente
-     * su categoría. Lanza IllegalArgumentException si el valor está fuera de rango
-     * (validación defensiva, evita estados inválidos del dominio).
+     * Crea una escala emocional calculando automaticamente su categoria.
      *
-     * @param valor intensidad reportada, entre 1 y 10
-     * @return instancia inmutable de EscalaEmocional
+     * @param valor intensidad emocional entre {@value #VALOR_MINIMO} y {@value #VALOR_MAXIMO}
+     * @throws IllegalArgumentException si el valor esta fuera de rango
      */
-    public static EscalaEmocional desde(int valor) {
+    public EscalaEmocional(int valor) {
         if (valor < VALOR_MINIMO || valor > VALOR_MAXIMO) {
             throw new IllegalArgumentException(
-                    "El valor de la escala emocional debe estar entre " + VALOR_MINIMO + " y " + VALOR_MAXIMO);
+                "El valor de la escala debe estar entre " + VALOR_MINIMO + " y " + VALOR_MAXIMO);
         }
-        return new EscalaEmocional(valor, categorizar(valor));
+        this.valor = valor;
+        this.categoria = categorizar(valor);
     }
 
     private static String categorizar(int valor) {
-        if (valor <= LIMITE_CATEGORIA_BAJO) {
-            return "BAJO";
+        if (valor <= LIMITE_BAJO) {
+            return CATEGORIA_BAJO;
         }
-        if (valor <= LIMITE_CATEGORIA_MEDIO) {
-            return "MEDIO";
+        if (valor <= LIMITE_MEDIO) {
+            return CATEGORIA_MEDIO;
         }
-        return "ALTO";
+        return CATEGORIA_ALTO;
     }
 
     public int getValor() {
@@ -55,21 +57,28 @@ public final class EscalaEmocional {
         return categoria;
     }
 
+    /**
+     * Indica si esta escala corresponde a un nivel de estres alto.
+     */
+    public boolean esAlta() {
+        return CATEGORIA_ALTO.equals(categoria);
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof EscalaEmocional)) {
+        if (!(obj instanceof EscalaEmocional)) {
             return false;
         }
-        EscalaEmocional otra = (EscalaEmocional) o;
-        return valor == otra.valor && categoria.equals(otra.categoria);
+        EscalaEmocional that = (EscalaEmocional) obj;
+        return valor == that.valor;
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(valor, categoria);
+        return Objects.hash(valor);
     }
 
     @Override

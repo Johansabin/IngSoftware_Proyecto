@@ -1,14 +1,18 @@
-package BC2_Seguimiento-Emocional;
+package BC2_SeguimientoEmocional;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Entidad de dominio: un registro puntual de una emoción reportada por el estudiante.
- * Inmutable después de su creación (no expone setters) para evitar modificaciones
- * inconsistentes una vez registrada en la bitácora.
+ * Registro individual de una emocion reportada por un estudiante en una fecha.
+ *
+ * <p>Estilo de programacion aplicado: <b>Things</b>. Emocion encapsula sus
+ * datos (inmutables) y expone comportamiento propio, por ejemplo
+ * {@link #indicaEstres()}, en lugar de dejar que otras clases inspeccionen
+ * su estado interno y decidan por ella.</p>
  */
-public final class Emocion {
+public class Emocion {
 
     private final UUID id;
     private final LocalDate fecha;
@@ -16,15 +20,12 @@ public final class Emocion {
     private final EscalaEmocional escala;
     private final String descripcion;
 
-    public Emocion(UUID id, LocalDate fecha, String tipo, EscalaEmocional escala, String descripcion) {
-        if (id == null || fecha == null || tipo == null || tipo.isBlank() || escala == null) {
-            throw new IllegalArgumentException("id, fecha, tipo y escala son obligatorios para registrar una emoción");
-        }
-        this.id = id;
-        this.fecha = fecha;
-        this.tipo = tipo;
-        this.escala = escala;
+    public Emocion(LocalDate fecha, String tipo, EscalaEmocional escala, String descripcion) {
+        this.fecha = Objects.requireNonNull(fecha, "La fecha es obligatoria");
+        this.tipo = Objects.requireNonNull(tipo, "El tipo de emocion es obligatorio");
+        this.escala = Objects.requireNonNull(escala, "La escala emocional es obligatoria");
         this.descripcion = descripcion;
+        this.id = UUID.randomUUID();
     }
 
     public UUID getId() {
@@ -47,20 +48,33 @@ public final class Emocion {
         return descripcion;
     }
 
+    /**
+     * Una emocion se considera indicadora de estres cuando su escala es alta.
+     * La decision la toma la propia capsula, delegando en EscalaEmocional.
+     */
+    public boolean indicaEstres() {
+        return escala.esAlta();
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Emocion)) {
+        if (!(obj instanceof Emocion)) {
             return false;
         }
-        Emocion otra = (Emocion) o;
-        return id.equals(otra.id);
+        Emocion that = (Emocion) obj;
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Emocion{id=" + id + ", fecha=" + fecha + ", tipo='" + tipo + "', escala=" + escala + "}";
     }
 }

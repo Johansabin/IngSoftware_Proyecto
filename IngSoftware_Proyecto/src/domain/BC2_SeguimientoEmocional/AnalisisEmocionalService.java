@@ -1,46 +1,125 @@
-package BC2_Seguimiento-Emocional;
+package BC2_SeguimientoEmocional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
- * Servicio de dominio para análisis emocional que involucra lógica que no
- * pertenece naturalmente a una sola entidad (cruza reglas de negocio propias
- * del bounded context, no del agregado en sí).
+ * Servicio de dominio que orquesta el analisis emocional de una bitacora.
+ *
+ * <p>Estilo de programacion aplicado: <b>Pipeline</b>. Cada paso del analisis
+ * es una funcion pura ({@code Function<Entrada, Salida>}) sin estado
+ * compartido entre pasos; las funciones se encadenan con {@code andThen}
+ * formando una tuberia de transformaciones, y solo el ultimo eslabon
+ * produce un efecto observable (imprimir el resultado).</p>
  */
-public final class AnalisisEmocionalService {
+public class AnalisisEmocionalService {
 
-    private static final int UMBRAL_REGISTROS_ALTOS_PARA_PATRON = 3;
-    private static final String CATEGORIA_ALTO_ESTRES = "ALTO";
+    private static final int MINIMO_DIAS_PATRON = 3;
+    private static final int DIAS_EN_SEMANA_MENOS_UNO = 6;
 
     /**
-     * Genera el resumen semanal de una bitácora para la semana indicada.
-     *
-     * @param bitacora bitácora a analizar; no puede ser null
-     * @param semana   fecha de inicio de la semana a analizar; no puede ser null
-     * @return el resumen semanal calculado
+     * Genera el resumen semanal de una bitacora mediante una tuberia de
+     * funciones puras y publica el resultado del analisis.
      */
-    public ResumenSemanal generarResumen(BitacoraEmocional bitacora, LocalDate semana) {
-        if (bitacora == null || semana == null) {
-            throw new IllegalArgumentException("bitacora y semana son obligatorios");
-        }
-        return bitacora.calcularResumenSemanal(semana);
+    public void generarResumen(BitacoraEmocional bitacora, LocalDate semana) {
+        Objects.requireNonNull(bitacora, "La bitacora es obligatoria");
+        Objects.requireNonNull(semana, "La semana es obligatoria");
+
+        Function<BitacoraEmocional, List<Emocion>> obtenerRegistrosDeLaSemana =
+            b -> filtrarPorSemana(b.getRegistros(), semana);
+
+        Function<List<Emocion>, ResumenSemanal> construirResumen =
+            registros -> new ResumenSemanal(
+                calcularPromedio(registros),
+                contarDiasDePaz(registros),
+                inicioDeSemana(semana));
+
+        ResumenSemanal resumen = obtenerRegistrosDeLaSemana.andThen(construirResumen).apply(bitacora);
+        imprimirResumen(resumen);
     }
 
     /**
-     * Detecta si la bitácora muestra un patrón de estrés: al menos
-     * {@value #UMBRAL_REGISTROS_ALTOS_PARA_PATRON} registros de categoría ALTO
-     * en todo su historial.
-     *
-     * @param bitacora bitácora a analizar; no puede ser null
-     * @return true si se detecta un patrón de estrés, false en caso contrario
+     * Detecta patrones de estres sostenido mediante una tuberia de funciones
+     * puras que filtran, agrupan y evaluan los registros de la bitacora.
      */
-    public boolean detectarPatronesDeEstres(BitacoraEmocional bitacora) {
-        if (bitacora == null) {
-            throw new IllegalArgumentException("bitacora es obligatoria");
+    public void detectarPatronesDeEstres(BitacoraEmocional bitacora) {
+        Objects.requireNonNull(bitacora, "La bitacora es obligatoria");
+
+        Function<BitacoraEmocional, List<Emocion>> obtenerRegistrosDeEstres =
+            b -> soloRegistrosDeEstres(b.getRegistros());
+
+        Function<List<Emocion>, Map<String, Long>> agruparPorTipo =
+            AnalisisEmocionalService::contarPorTipo;
+
+        Function<Map<String, Long>, List<String>> detectarTiposConPatron =
+            conteos -> conteos.entrySet().stream()
+                .filter(entrada -> entrada.getValue() >= MINIMO_DIAS_PATRON)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        List<String> patrones = obtenerRegistrosDeEstres
+            .andThen(agruparPorTipo)
+            .andThen(detectarTiposConPatron)
+            .apply(bitacora);
+
+        imprimirPatrones(patrones);
+    }
+
+    private static List<Emocion> filtrarPorSemana(List<Emocion> registros, LocalDate semana) {
+        LocalDate inicio = inicioDeSemana(semana);
+        LocalDate fin = inicio.plusDays(DIAS_EN_SEMANA_MENOS_UNO);
+        return registros.stream()
+            .filter(e -> !e.getFecha().isBefore(inicio) && !e.getFecha().isAfter(fin))
+            .collect(Collectors.toList());
+    }
+
+    private static List<Emocion> soloRegistrosDeEstres(List<Emocion> registros) {
+        return registros.stream()
+            .filter(Emocion::indicaEstres)
+            .collect(Collectors.toList());
+    }
+
+    private static Map<String, Long> contarPorTipo(List<Emocion> registros) {
+        Map<String, Long> conteos = new HashMap<>();
+        for (Emocion emocion : registros) {
+            conteos.merge(emocion.getTipo(), 1L, Long::sum);
         }
-        long registrosDeAltoEstres = bitacora.getRegistros().stream()
-                .filter(registro -> CATEGORIA_ALTO_ESTRES.equals(registro.getEscala().getCategoria()))
-                .count();
-        return registrosDeAltoEstres >= UMBRAL_REGISTROS_ALTOS_PARA_PATRON;
+        return conteos;
+    }
+
+    private static double calcularPromedio(List<Emocion> registros) {
+        return registros.stream()
+            .mapToInt(e -> e.getEscala().getValor())
+            .average()
+            .orElse(0d);
+    }
+
+    private static int contarDiasDePaz(List<Emocion> registros) {
+        return (int) registros.stream()
+            .filter(e -> !e.indicaEstres())
+            .count();
+    }
+
+    private static LocalDate inicioDeSemana(LocalDate fecha) {
+        return fecha.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
+    private static void imprimirResumen(ResumenSemanal resumen) {
+        System.out.println("Resumen semanal: " + resumen);
+    }
+
+    private static void imprimirPatrones(List<String> patrones) {
+        if (patrones.isEmpty()) {
+            System.out.println("No se detectaron patrones de estres sostenido.");
+            return;
+        }
+        System.out.println("Patrones de estres detectados en: " + String.join(", ", patrones));
     }
 }
