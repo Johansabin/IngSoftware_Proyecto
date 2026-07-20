@@ -26,6 +26,9 @@ public class AutenticacionService {
      * @return La sesion creada si el proceso es exitoso, vacio en caso contrario.
      */
     public Optional<Sesion> iniciarSesion(CredencialesInstitucionales credenciales, DatosAuditoria auditoria) {
+        if (credenciales == null || auditoria == null) {
+            return Optional.empty();
+        }
         if (credenciales.getCodigoUniversitario() == null || credenciales.getCodigoUniversitario().isEmpty()) {
             return Optional.empty();
         }
