@@ -16,6 +16,9 @@ public class DatosAuditoria {
      * @param ipOrigen Direccion IP del dispositivo.
      */
     public DatosAuditoria(String ipOrigen) {
+        if (ipOrigen == null || ipOrigen.trim().isEmpty()) {
+            throw new IllegalArgumentException("La dirección IP de origen no puede ser nula o vacía.");
+        }
         this.ipOrigen = ipOrigen;
         this.fechaRegistro = LocalDateTime.now();
     }
