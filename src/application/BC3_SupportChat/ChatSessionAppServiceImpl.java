@@ -5,6 +5,7 @@ import BC3_SoporteChat.ChatSessionFactory;
 import BC3_SoporteChat.ChatSessionRepository;
 import BC3_SoporteChat.Message;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -49,5 +50,11 @@ public class ChatSessionAppServiceImpl implements ChatSessionAppService {
 
         return repository.findById(chatId)
                 .orElseThrow(() -> new IllegalArgumentException("No existe una sesion de chat con el id indicado"));
+    }
+
+    @Override
+    public List<ChatSession> getActiveChatsByPsychologist(UUID psychologistId) {
+        Objects.requireNonNull(psychologistId, "El id del psicologo es obligatorio");
+        return repository.findActiveByPsychologist(psychologistId);
     }
 }
