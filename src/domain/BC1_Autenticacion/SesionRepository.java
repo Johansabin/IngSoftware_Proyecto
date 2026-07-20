@@ -7,6 +7,8 @@ import java.util.UUID;
  * Puerto de interfaz (Repositorio) para persistir, actualizar y buscar sesiones en el sistema.
  * Define el contrato para el acceso a datos del agregado Sesion según los principios de DDD.
  */
+
+//Estilo aplicado: Persistent-Tables
 public interface SesionRepository {
 
     /**
@@ -32,3 +34,4 @@ public interface SesionRepository {
      */
     Optional<Sesion> buscarActivaPorCodigo(String codigoUsuario);
 }
+

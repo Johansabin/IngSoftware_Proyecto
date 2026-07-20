@@ -1,6 +1,7 @@
 package BC1_Autenticacion;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * Objeto de valor para el registro de auditoria de los inicios de sesion.
@@ -20,8 +21,7 @@ public class DatosAuditoria {
             throw new IllegalArgumentException("La dirección IP de origen no puede ser nula o vacía.");
         }
         this.ipOrigen = ipOrigen;
-        this.fechaRegistro = LocalDateTime.now();
-    }
+        this.fechaRegistro = LocalDateTime.now(ZoneId.of("America/Lima"));    }
 
     public String getIpOrigen() {
         return ipOrigen;

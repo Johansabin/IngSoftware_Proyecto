@@ -5,6 +5,10 @@ package BC1_Autenticacion;
  */
 public class SesionFactory {
 
+    private SesionFactory() {
+        // Constructor privado para ocultar el público implícito (SonarLint S1118)
+    }
+
     /**
      * Crea una nueva instancia de Sesion inicializada.
      *
