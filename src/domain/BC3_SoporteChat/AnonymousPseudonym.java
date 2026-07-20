@@ -1,12 +1,14 @@
 package BC3_SoporteChat;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class AnonymousPseudonym {
-    private String value;
 
-    public AnonymousPseudonym() {
-    }
+    private static final String ALIAS_PREFIX = "student-";
+    private static final int UUID_FRAGMENT_LENGTH = 8;
+
+    private final String value;
 
     public AnonymousPseudonym(String value) {
         this.value = validateValue(value);
@@ -23,8 +25,12 @@ public class AnonymousPseudonym {
         return normalizedValue;
     }
 
+    public static AnonymousPseudonym generate() {
+        String fragment = UUID.randomUUID().toString().substring(0, UUID_FRAGMENT_LENGTH);
+        return new AnonymousPseudonym(ALIAS_PREFIX + fragment);
+    }
+
     public String getValue() {
         return value;
     }
 }
-

@@ -5,21 +5,22 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Message {
-    private static final int MAX_CONTENT_LENGTH = 500;
+    private static final int MAX_CONTENT_LENGTH = 1000;
 
-    private UUID id;
-    private String content;
-    private SenderRole senderRole;
-    private LocalDateTime sentAt;
-
-    public Message() {
-    }
+    private final UUID id;
+    private final String content;
+    private final SenderRole senderRole;
+    private final LocalDateTime sentAt;
 
     public Message(String content, SenderRole senderRole) {
-        this.id = UUID.randomUUID();
+        this(UUID.randomUUID(), content, senderRole, LocalDateTime.now());
+    }
+
+    public Message(UUID id, String content, SenderRole senderRole, LocalDateTime sentAt) {
+        this.id = Objects.requireNonNull(id, "The message id is required");
         this.content = validateContent(content);
         this.senderRole = Objects.requireNonNull(senderRole, "The sender role is required");
-        this.sentAt = LocalDateTime.now();
+        this.sentAt = Objects.requireNonNull(sentAt, "The sent date is required");
     }
 
     private String validateContent(String content) {
@@ -53,4 +54,3 @@ public class Message {
         return sentAt;
     }
 }
-

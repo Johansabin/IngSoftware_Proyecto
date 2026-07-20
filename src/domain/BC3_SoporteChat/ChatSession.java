@@ -1,6 +1,5 @@
 package BC3_SoporteChat;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,36 +7,40 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ChatSession {
-    private UUID id;
-    private AnonymousPseudonym student;
-    private UUID psychologistId;
-    private List<Message> messages;
-    private ChatSessionStatus status;
-    private LocalDateTime createdAt;
-    private LocalDateTime closedAt;
 
-    public ChatSession() {
-        this.messages = new ArrayList<>();
-        this.status = ChatSessionStatus.ACTIVE;
-    }
+    private final UUID id;
+    private final AnonymousPseudonym student;
+    private final UUID psychologistId;
+    private final List<Message> messages;
+    private final AuditData auditData;
+    private ChatSessionStatus status;
 
     public ChatSession(AnonymousPseudonym student, UUID psychologistId) {
-        this.id = UUID.randomUUID();
+        this(UUID.randomUUID(), student, psychologistId, new ArrayList<>(), ChatSessionStatus.ACTIVE, new AuditData());
+    }
+
+    public ChatSession(
+            UUID id,
+            AnonymousPseudonym student,
+            UUID psychologistId,
+            List<Message> messages,
+            ChatSessionStatus status,
+            AuditData auditData) {
+        this.id = Objects.requireNonNull(id, "The chat session id is required");
         this.student = Objects.requireNonNull(student, "The anonymous student is required");
         this.psychologistId = Objects.requireNonNull(psychologistId, "The psychologist is required");
-        this.messages = new ArrayList<>();
-        this.status = ChatSessionStatus.ACTIVE;
-        this.createdAt = LocalDateTime.now();
+        this.messages = new ArrayList<>(Objects.requireNonNull(messages, "The messages list is required"));
+        this.status = Objects.requireNonNull(status, "The chat session status is required");
+        this.auditData = Objects.requireNonNull(auditData, "The audit data is required");
     }
 
     public void sendMessage(Message message) {
-        Objects.requireNonNull(message, "The message is required");
-
         if (status == ChatSessionStatus.CLOSED) {
             throw new IllegalStateException("Cannot send messages to a closed chat session");
         }
 
-        messages.add(message);
+        messages.add(Objects.requireNonNull(message, "The message is required"));
+        auditData.registerUpdate();
     }
 
     public void close() {
@@ -46,7 +49,7 @@ public class ChatSession {
         }
 
         status = ChatSessionStatus.CLOSED;
-        closedAt = LocalDateTime.now();
+        auditData.registerUpdate();
     }
 
     public boolean isActive() {
@@ -73,12 +76,7 @@ public class ChatSession {
         return status;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getClosedAt() {
-        return closedAt;
+    public AuditData getAuditData() {
+        return auditData;
     }
 }
-
