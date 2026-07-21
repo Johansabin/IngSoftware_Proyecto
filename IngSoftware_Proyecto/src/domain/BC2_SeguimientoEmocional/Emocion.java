@@ -56,6 +56,18 @@ public class Emocion {
         return escala.esAlta();
     }
 
+    /**
+     * Valor numerico de la escala emocional de este registro.
+     *
+     * <p>Se expone como delegado directo para que el codigo cliente no tenga
+     * que encadenar {@code getEscala().getValor()} (ley de Demeter): a
+     * Emocion, como "Thing", le corresponde exponer su propio dato en vez de
+     * obligar a quien la usa a conocer la estructura interna de EscalaEmocional.</p>
+     */
+    public int getValorEscala() {
+        return escala.getValor();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

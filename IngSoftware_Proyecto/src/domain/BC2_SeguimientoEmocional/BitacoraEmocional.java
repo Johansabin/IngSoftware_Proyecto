@@ -34,6 +34,7 @@ public class BitacoraEmocional {
     private final Map<LocalDate, ResumenSemanal> resumenesSemanales;
 
     // Estado de trabajo compartido entre los pasos de la receta de calculo.
+    private LocalDate semanaInicioEnCalculo;
     private List<Emocion> registrosSemanaEnCalculo;
     private double promedioEstresEnCalculo;
     private int diasDePazEnCalculo;
@@ -84,16 +85,16 @@ public class BitacoraEmocional {
         filtrarRegistrosDeLaSemana(semana);
         calcularPromedioEstres();
         calcularDiasDePaz();
-        guardarResumen(semana);
+        guardarResumen();
     }
 
     private void filtrarRegistrosDeLaSemana(LocalDate semana) {
-        LocalDate inicio = inicioDeSemana(semana);
-        LocalDate fin = inicio.plusDays(DIAS_EN_SEMANA - 1L);
+        semanaInicioEnCalculo = inicioDeSemana(semana);
+        LocalDate fin = semanaInicioEnCalculo.plusDays(DIAS_EN_SEMANA - 1L);
         registrosSemanaEnCalculo = new ArrayList<>();
         for (Emocion emocion : registros) {
             LocalDate fecha = emocion.getFecha();
-            if (!fecha.isBefore(inicio) && !fecha.isAfter(fin)) {
+            if (!fecha.isBefore(semanaInicioEnCalculo) && !fecha.isAfter(fin)) {
                 registrosSemanaEnCalculo.add(emocion);
             }
         }
@@ -106,7 +107,7 @@ public class BitacoraEmocional {
         }
         int suma = 0;
         for (Emocion emocion : registrosSemanaEnCalculo) {
-            suma += emocion.getEscala().getValor();
+            suma += emocion.getValorEscala();
         }
         promedioEstresEnCalculo = (double) suma / registrosSemanaEnCalculo.size();
     }
@@ -121,10 +122,10 @@ public class BitacoraEmocional {
         diasDePazEnCalculo = dias;
     }
 
-    private void guardarResumen(LocalDate semana) {
-        LocalDate inicio = inicioDeSemana(semana);
-        ResumenSemanal resumen = new ResumenSemanal(promedioEstresEnCalculo, diasDePazEnCalculo, inicio);
-        resumenesSemanales.put(inicio, resumen);
+    private void guardarResumen() {
+        ResumenSemanal resumen = new ResumenSemanal(
+            promedioEstresEnCalculo, diasDePazEnCalculo, semanaInicioEnCalculo);
+        resumenesSemanales.put(semanaInicioEnCalculo, resumen);
     }
 
     /**

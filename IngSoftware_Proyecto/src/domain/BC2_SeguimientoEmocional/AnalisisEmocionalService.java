@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
  */
 public class AnalisisEmocionalService {
 
+    // Umbral de dias con el mismo tipo de emocion de estres para
+    // considerar que existe un patron sostenido (no un evento aislado).
     private static final int MINIMO_DIAS_PATRON = 3;
-    private static final int DIAS_EN_SEMANA_MENOS_UNO = 6;
+    private static final int OFFSET_ULTIMO_DIA_DE_SEMANA = 6;
 
     /**
      * Genera el resumen semanal de una bitacora mediante una tuberia de
@@ -74,7 +76,7 @@ public class AnalisisEmocionalService {
 
     private static List<Emocion> filtrarPorSemana(List<Emocion> registros, LocalDate semana) {
         LocalDate inicio = inicioDeSemana(semana);
-        LocalDate fin = inicio.plusDays(DIAS_EN_SEMANA_MENOS_UNO);
+        LocalDate fin = inicio.plusDays(OFFSET_ULTIMO_DIA_DE_SEMANA);
         return registros.stream()
             .filter(e -> !e.getFecha().isBefore(inicio) && !e.getFecha().isAfter(fin))
             .collect(Collectors.toList());
@@ -96,7 +98,7 @@ public class AnalisisEmocionalService {
 
     private static double calcularPromedio(List<Emocion> registros) {
         return registros.stream()
-            .mapToInt(e -> e.getEscala().getValor())
+            .mapToInt(Emocion::getValorEscala)
             .average()
             .orElse(0d);
     }

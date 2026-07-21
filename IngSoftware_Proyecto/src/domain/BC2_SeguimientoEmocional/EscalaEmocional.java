@@ -33,7 +33,8 @@ public class EscalaEmocional {
     public EscalaEmocional(int valor) {
         if (valor < VALOR_MINIMO || valor > VALOR_MAXIMO) {
             throw new IllegalArgumentException(
-                "El valor de la escala debe estar entre " + VALOR_MINIMO + " y " + VALOR_MAXIMO);
+                "El valor de la escala debe estar entre " + VALOR_MINIMO + " y " + VALOR_MAXIMO
+                    + ", pero se recibio " + valor);
         }
         this.valor = valor;
         this.categoria = categorizar(valor);

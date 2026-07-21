@@ -18,10 +18,12 @@ public class ResumenSemanal {
 
     public ResumenSemanal(double promedioEstres, int diasDePaz, LocalDate semanaInicio) {
         if (promedioEstres < 0) {
-            throw new IllegalArgumentException("El promedio de estres no puede ser negativo");
+            throw new IllegalArgumentException(
+                "El promedio de estres no puede ser negativo, se recibio " + promedioEstres);
         }
         if (diasDePaz < 0) {
-            throw new IllegalArgumentException("Los dias de paz no pueden ser negativos");
+            throw new IllegalArgumentException(
+                "Los dias de paz no pueden ser negativos, se recibio " + diasDePaz);
         }
         this.promedioEstres = promedioEstres;
         this.diasDePaz = diasDePaz;
