@@ -1,5 +1,7 @@
 package BC1_Autenticacion;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,7 +55,6 @@ public class AutenticacionService {
             sesionRepository.guardar(sesion);
         }
     }
-
     /**
      * Aplica el estilo Pipeline (Stream API) para filtrar sesiones activas.
      *
@@ -61,14 +62,16 @@ public class AutenticacionService {
      * @param codigoUsuario Código de usuario a buscar.
      * @return Lista filtrada de sesiones activas del usuario.
      */
-    public java.util.List<Sesion> obtenerSesionesActivasPorUsuario(java.util.List<Sesion> listaSesiones, String codigoUsuario) {
+    public List<Sesion> obtenerSesionesActivasPorUsuario(List<Sesion> listaSesiones, String codigoUsuario) {
         if (listaSesiones == null || codigoUsuario == null) {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
+        
         return listaSesiones.stream()
-                .filter(Sesion::isActiva)
-                .filter(s -> s.getCodigoUsuario().equals(codigoUsuario))
-                .collect(java.util.stream.Collectors.toList());
+            .filter(Sesion::isActiva)
+            .filter(s -> s.getCodigoUsuario().equals(codigoUsuario))
+            .toList();
+
     }
 
 
