@@ -31,15 +31,27 @@ public class EscalaEmocional {
      * @throws IllegalArgumentException si el valor esta fuera de rango
      */
     public EscalaEmocional(int valor) {
+        validarRango(valor);
+        this.valor = valor;
+        this.categoria = categorizar(valor);
+    }
+
+    /**
+     * Regla de validez del valor. Cambia solo si cambia el rango permitido
+     * de la escala (independiente de como se categoriza ese valor).
+     */
+    private static void validarRango(int valor) {
         if (valor < VALOR_MINIMO || valor > VALOR_MAXIMO) {
             throw new IllegalArgumentException(
                 "El valor de la escala debe estar entre " + VALOR_MINIMO + " y " + VALOR_MAXIMO
                     + ", pero se recibio " + valor);
         }
-        this.valor = valor;
-        this.categoria = categorizar(valor);
     }
 
+    /**
+     * Regla de categorizacion. Cambia solo si cambian los umbrales o el
+     * numero de categorias, independientemente de la regla de validez.
+     */
     private static String categorizar(int valor) {
         if (valor <= LIMITE_BAJO) {
             return CATEGORIA_BAJO;
