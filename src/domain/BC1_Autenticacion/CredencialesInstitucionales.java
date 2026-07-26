@@ -41,4 +41,17 @@ public class CredencialesInstitucionales {
     public String getHashContrasena() {
         return hashContrasena;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CredencialesInstitucionales that = (CredencialesInstitucionales) o;
+        return codigoUniversitario.equals(that.codigoUniversitario) && hashContrasena.equals(that.hashContrasena);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(codigoUniversitario, hashContrasena);
+    }
 }

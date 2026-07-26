@@ -102,4 +102,17 @@ public class Sesion {
     public boolean isActiva() {
         return activa;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sesion sesion = (Sesion) o;
+        return id.equals(sesion.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

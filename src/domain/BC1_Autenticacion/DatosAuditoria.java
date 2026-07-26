@@ -30,4 +30,17 @@ public class DatosAuditoria {
     public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DatosAuditoria that = (DatosAuditoria) o;
+        return ipOrigen.equals(that.ipOrigen) && fechaRegistro.equals(that.fechaRegistro);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(ipOrigen, fechaRegistro);
+    }
 }

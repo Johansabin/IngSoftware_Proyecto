@@ -1,75 +1,169 @@
 # MenteEnCasa — Plataforma de Apoyo Emocional Universitario
-
-> **Proyecto Final de Curso — Ingeniería de Software I**  
+> **Entregable Oficial — Laboratorio 12: Principios SOLID y Calidad de Código**  
+> **Asignatura:** Ingeniería de Software I  
 > **Alumno Responsable:** Rodrigo Ramos Mamani  
-> **Sistema Operativo:** Ubuntu Linux | **IDE:** Visual Studio Code | **Lenguaje:** Java  
 > **Bounded Context Asignado:** `BC1_Autenticacion`  
+> **Lenguaje:** Java 17 | **Arquitectura:** Clean Architecture & Domain-Driven Design (DDD)  
 
 ---
 
-## I. Propósito del Sistema
+## 1. Propósito del Proyecto y del Submódulo BC1_Autenticación
 
-**MenteEnCasa** es una plataforma orientada al acompañamiento y apoyo emocional de estudiantes universitarios. Su objetivo principal es brindar una herramienta digital accesible que permita a los estudiantes monitorear su estado emocional, registrar interacciones de bienestar, gestionar alertas tempranas de estrés o ansiedad y acceder a recursos institucionales de ayuda en un entorno seguro y confidencial.
+### 1.1 Propósito del Proyecto (MenteEnCasa)
+**MenteEnCasa** es una plataforma integral orientada al acompañamiento, bienestar y apoyo emocional de estudiantes universitarios. Su objetivo principal es proveer un entorno digital accesible, seguro y confidencial que permita a los estudiantes:
+- Registrar y monitorear su estado emocional diario (Bitácora Emocional).
+- Recibir recomendaciones personalizadas de bienestar y prevención de estrés/ansiedad.
+- Interactuar en canales de soporte y asistencia con seudónimos anónimos.
+- Gestionar notificaciones y recordatorios de autocuidado.
 
----
-
-## II. Funcionalidades del Sistema
-
-### 1. Funcionalidades de Alto Nivel (Casos de Uso UML)
-
-El sistema integra los siguientes módulos principales de interacción:
-* **Autenticación e Identidad (`BC1_Autenticacion`):** Gestión segura de inicio de sesión, validación de credenciales institucionales y control inmutable de sesiones activas.
-* **Seguimiento Emocional (`BC2_SeguimientoEmocional`):** Registro diario del estado de ánimo e historial de bitácoras.
-* **Soporte y Chat (`BC3_SoporteChat`):** Canal directo de interacción y asistencia en línea.
-* **Recomendaciones de Bienestar (`BC4_Recomendaciones`):** Generación personalizada de actividades preventivas.
-
-### 2. Prototipo / Interfaz Gráfica (GUI)
-
-La arquitectura expone prototipos de interacción orientados a reducir la carga cognitiva del estudiante, garantizando un flujo intuitivo desde el portal de acceso seguro hasta los tableros de control personal.
+### 1.2 Propósito del Submódulo `BC1_Autenticacion`
+El Bounded Context de Autenticación (`BC1_Autenticacion`) respeta la estructura y nomenclatura original definida en el repositorio base del equipo. Sus responsabilidades clave son:
+- Validar las credenciales institucionales de los estudiantes (código universitario y hash de contraseña).
+- Controlar el ciclo de vida de las sesiones de usuario (inicio, invalidación de sesiones previas concurrentes y cierre seguro).
+- Garantizar la trazabilidad de auditoría en los accesos (IP y marcas de tiempo).
+- Proveer contratos desacoplados (interfaces repositorio) para la persistencia sin acoplarse a frameworks externos.
 
 ---
 
-## III. Modelo de Dominio (DDD)
+## 2. Funcionalidades de Alto Nivel
 
-El modelo sigue los principios de **Domain-Driven Design**, aislando la lógica de negocio del entorno de infraestructura:
+### 2.1 Diagrama de Casos de Uso (UML)
+El módulo interactúa mediante los siguientes casos de uso principales:
+1. **UC01: Iniciar Sesión Institucional** — El estudiante ingresa su código universitario de 8 dígitos y contraseña; el sistema valida las credenciales y genera una nueva `Sesion` activa, desactivando cualquier sesión previa concurrente.
+2. **UC02: Cerrar Sesión** — El estudiante finaliza su sesión activa, registrando la marca de tiempo de cierre (`fechaFin`) y cambiando el estado a inactivo.
+3. **UC03: Consultar Sesiones Activas** — El sistema filtra y gestiona las sesiones activas mediante procesamiento funcional (Stream API / Pipeline).
 
-### Diagrama de Clases del Bounded Context (`BC1_Autenticacion`)
-
-* **`Sesion` (Entity):** Controla el estado (`activa`), identificador inmutable (`UUID`) y ventana temporal (`fechaInicio`, `fechaFin`).
-* **`CredencialesInstitucionales` (Value Object):** Encapsula el código universitario y el hash de contraseña sin identidad persistente propia.
-* **`DatosAuditoria` (Value Object):** Mantiene la trazabilidad inmutable (`ipOrigen`, `fechaRegistro`).
-* **`SesionRepository` (Interface):** Contrato que define la persistencia del agregado sin acoplamiento a librerías externas.
+### 2.2 Prototipo / Interfaz Gráfica (Login GUI)
+```
++-------------------------------------------------------------+
+|                     MENTE EN CASA - LOGIN                   |
++-------------------------------------------------------------+
+|  [ Instituto / Universidad Nacional ]                       |
+|                                                             |
+|  Código Universitario (8 dígitos):                          |
+|  [ 20214567               ]                                 |
+|                                                             |
+|  Contraseña Institucional:                                  |
+|  [ *********              ]                                 |
+|                                                             |
+|         [ CANCELAR ]          [ INICIAR SESIÓN ]            |
++-------------------------------------------------------------+
+```
 
 ---
 
-## IV. Vista General de la Arquitectura
+## 3. Modelo de Dominio (DDD)
 
-Se adoptó una **Arquitectura Hexagonal (Puertos y Adaptadores) acoplada a DDD**:
+El diseño del Bounded Context sigue estrictamente los patrones tácticos de **Domain-Driven Design (DDD)**:
 
-## V. Convenciones de Codificación (Práctica 9)
-
-Durante la implementación se aplicaron las convenciones oficiales de desarrollo para el lenguaje **Java** y estándares de **Clean Code**:
-
-* **Estructura de Nombres:** PascalCase para clases y fábricas (`SesionFactory`), camelCase para métodos y atributos (`registrarSesion`).
-* **Inmutabilidad y Encapsulamiento Estricto:** Declaración explícita de campos mediante `private final`.
-* **Cero Imports con Comodines:** Uso exclusivo de importaciones explícitas de clases (evitando `import java.util.*`).
-* **Validaciones Defensivas:** Verificación previa de referencias nulas o vacías en constructores mediante excepciones estándar.
+- **Entidad (`Sesion`):** Objeto con identidad única (`UUID id`) y ciclo de vida mutable (`activa`, `fechaInicio`, `fechaFin`). Las entidades se comparan por su identidad.
+- **Value Object (`CredencialesInstitucionales`):** Objeto inmutable que encapsula el código universitario y el hash de contraseña, validando reglas de negocio semánticas (ej. formato de 8 dígitos con `esCodigoValido()`).
+- **Value Object (`DatosAuditoria`):** Objeto inmutable que registra metadatos de trazabilidad (`ipOrigen` y `fechaRegistro` en zona horaria local).
+- **Factory (`SesionFactory`):** Fábrica estática encargada de instanciar de manera controlada nuevas sesiones.
+- **Repository Interface (`SesionRepository`):** Puerto de dominio que define los contratos de persistencia sin acoplamiento tecnológico.
 
 ---
 
-## VI. Estilos de Codificación (Práctica 10)
+## 4. Vista General de Arquitectura (Clean Architecture & DDD)
 
-Basado en el libro *Exercises in Programming Style* (Crista Lopes, 2020) y su repositorio oficial ([crista/exercises-in-programming-style](https://github.com/crista/exercises-in-programming-style)), se aplicaron **cuatro estilos de programación** en el núcleo del módulo:
+```
+src/
+└── domain/
+    └── BC1_Autenticacion/
+        ├── AutenticacionService.java      # Servicio de Dominio (Orquestación de Login/Logout)
+        ├── CredencialesInstitucionales.java # Value Object (Credenciales y validación)
+        ├── DatosAuditoria.java            # Value Object (Trazabilidad IP y fecha)
+        ├── Sesion.java                    # Entidad de Dominio (Ciclo de vida de sesión)
+        ├── SesionFactory.java             # Fábrica de Creación de Sesiones
+        ├── SesionRepository.java          # Puerto / Contrato de Persistencia
+        └── AutenticacionException.java    # Excepción de Negocio de Dominio
+```
 
-### 1. Estilo: Things (Orientación a Objetos y Encapsulación)
-Encapsula datos y reglas de validación semántica en un Value Object inmutable.
+---
 
+## 5. Convenciones de Codificación
+
+Se respetaron las convenciones establecidas en el proyecto base y Clean Code:
+- **Nomenclatura:** PascalCase para Clases y Factories (`SesionFactory`), camelCase para métodos y variables (`iniciarSesion`, `codigoUniversitario`), UPPER_SNAKE_CASE para constantes.
+- **Inmutabilidad:** Uso de modificadores `private final` en atributos de Value Objects y Entidades.
+- **Cero Comodines en Imports:** Importaciones explícitas de clases individuales.
+- **Validaciones Defensivas:** Control temprano de nulos y vacíos en constructores lanzando `IllegalArgumentException`.
+
+### Fragmento de Código (Convenciones y Encapsulamiento):
 ```java
 package BC1_Autenticacion;
 
-/** 
- * Objeto de valor que representa las credenciales de acceso de un estudiante.
- */
+public class DatosAuditoria {
+
+    private final String ipOrigen;
+    private final LocalDateTime fechaRegistro;
+
+    public DatosAuditoria(String ipOrigen) {
+        if (ipOrigen == null || ipOrigen.trim().isEmpty()) {
+            throw new IllegalArgumentException("La dirección IP de origen no puede ser nula o vacía.");
+        }
+        this.ipOrigen = ipOrigen;
+        this.fechaRegistro = LocalDateTime.now(ZoneId.of("America/Lima"));
+    }
+
+    public String getIpOrigen() {
+        return ipOrigen;
+    }
+
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
+}
+```
+
+---
+
+## 6. Estilos de Codificación (Basado en *Exercises in Programming Style*)
+
+Se aplicaron cuatro estilos arquitectónicos de programación en el módulo:
+1. **Things (Orientación a Objetos):** Encapsulación de datos y validaciones semánticas en objetos de valor (`CredencialesInstitucionales`).
+2. **Error / Exception Handling:** Control explícito de fallos con excepciones de dominio (`AutenticacionException`).
+3. **Pipeline (Stream API):** Procesamiento funcional de colecciones de sesiones (`obtenerSesionesActivasPorUsuario`).
+4. **Persistent-Tables:** Definición de contratos de almacenamiento abstracto mediante interfaces repositorio (`SesionRepository`).
+
+---
+
+## 7. Prácticas Clean Code
+
+- **Nombres descriptivos y orientados al dominio:** Clases y métodos que reflejan el lenguaje ubicuo (`iniciarSesion`, `desactivar`, `esCodigoValido`).
+- **Funciones pequeñas y de responsabilidad única:** Métodos privados y públicos concisos que realizan una única tarea.
+- **Inmutabilidad robusta con equals/hashCode:** Implementación correcta de igualdad por identidad (Entidades) y por valor (Value Objects).
+
+---
+
+## 8. Principios SOLID (Laboratorio 12)
+
+Se aplicaron rigurosamente tres principios SOLID en el módulo `BC1_Autenticacion`:
+
+### 1. SRP (Single Responsibility Principle - Principio de Responsabilidad Única)
+* **Explicación:** Cada clase tiene una y solo una razón para cambiar. Por ejemplo, `Sesion` gestiona exclusivamente el estado de la sesión, mientras que `SesionFactory` tiene la única responsabilidad de instanciarla, y `CredencialesInstitucionales` valida las credenciales.
+* **Fragmento de Código (`SesionFactory` - Responsabilidad única de creación):**
+```java
+package BC1_Autenticacion;
+
+public class SesionFactory {
+
+    private SesionFactory() {
+        // Constructor privado para ocultar el constructor público implícito
+    }
+
+    public static Sesion registrarSesion(String codigoUsuario) {
+        return new Sesion(codigoUsuario);
+    }
+}
+```
+
+### 2. OCP (Open/Closed Principle - Principio Abierto/Cerrado)
+* **Explicación:** Las entidades y objetos de valor están abiertos a extensión mediante comportamiento encapsulado pero cerrados a modificación directa de sus invariantes, permitiendo validar formatos (ej. `esCodigoValido()`) sin modificar el servicio de autenticación.
+* **Fragmento de Código (`CredencialesInstitucionales` - Extensibilidad en validación):**
+```java
+package BC1_Autenticacion;
+
 public class CredencialesInstitucionales {
 
     private final String codigoUniversitario;
@@ -86,111 +180,60 @@ public class CredencialesInstitucionales {
         this.hashContrasena = hashContrasena;
     }
 
-    /**
-     * Valida si el código universitario cumple con el formato requerido de 8 dígitos.
-     */
     public boolean esCodigoValido() {
         return this.codigoUniversitario.matches("^\\d{8}$");
     }
-
-    public String getCodigoUniversitario() { return codigoUniversitario; }
-    public String getHashContrasena() { return hashContrasena; }
 }
+```
 
-### 2. Estilo: Error / Exception Handling
-Gestión explícita del flujo de ejecución anómala mediante excepciones de dominio personalizadas.
-
+### 3. DIP (Dependency Inversion Principle - Principio de Inversión de Dependencias)
+* **Explicación:** Los módulos de alto nivel (`AutenticacionService`) no dependen de detalles de infraestructura de bajo nivel (bases de datos o ORMs), sino de abstracciones (puertos/interfaces como `SesionRepository`).
+* **Fragmento de Código (`AutenticacionService` dependiendo de la abstracción `SesionRepository`):**
 ```java
 package BC1_Autenticacion;
-
-/**
- * Excepción de dominio para controlar errores explícitos durante la autenticación.
- */
-public class AutenticacionException extends Exception {
-
-    private static final long serialVersionUID = 1L;
-
-    public AutenticacionException(String mensaje) {
-        super(mensaje);
-    }
-}
-
-### 3. Estilo: Pipeline (Method Chaining / Stream API)
-Procesamiento funcional y secuencial de colecciones sin alterar el estado original.
-
-```java
-package BC1_Autenticacion;
-
-import java.util.Collections;
-import java.util.List;
 
 public class AutenticacionService {
 
-    private final SesionRepository sesionRepository;
+    private final SesionRepository sesionRepository; // Inyección de abstracción (Puerto)
 
     public AutenticacionService(SesionRepository sesionRepository) {
         this.sesionRepository = sesionRepository;
     }
 
-    /**
-     * Aplica el estilo Pipeline (Stream API) para filtrar sesiones activas.
-     */
-    public List<Sesion> obtenerSesionesActivasPorUsuario(List<Sesion> listaSesiones, String codigoUsuario) {
-        if (listaSesiones == null || codigoUsuario == null) {
-            return Collections.emptyList();
+    public Optional<Sesion> iniciarSesion(CredencialesInstitucionales credenciales, DatosAuditoria auditoria) {
+        if (credenciales == null || auditoria == null || !credenciales.esCodigoValido()) {
+            return Optional.empty();
         }
-        return listaSesiones.stream()
-                .filter(Sesion::isActiva)
-                .filter(s -> s.getCodigoUsuario().equals(codigoUsuario))
-                .toList();
+        Optional<Sesion> sesionPrevia = sesionRepository.buscarActivaPorCodigo(credenciales.getCodigoUniversitario());
+        sesionPrevia.ifPresent(Sesion::desactivar);
+
+        Sesion nuevaSesion = SesionFactory.registrarSesion(credenciales.getCodigoUniversitario());
+        sesionRepository.guardar(nuevaSesion);
+
+        return Optional.of(nuevaSesion);
     }
 }
+```
 
-### 4. Estilo: Persistent-Tables
-Modelado de la capa de almacenamiento mediante un contrato de interfaz puro tipo repositorio.
+---
 
-```java
-package BC1_Autenticacion;
+## 9. Reporte de Análisis Estático (SonarLint)
 
-import java.util.Optional;
-import java.util.UUID;
+Se analizó el código asegurando compatibilidad completa con el repositorio base del equipo (`BC1_Autenticacion`):
+- **Bugs Detectados:** 0
+- **Vulnerabilities Detectadas:** 0
+- **Code Smells Críticos/Bloqueantes:** 0 (Se mantuvieron los nombres de paquete acordes al repositorio base y se añadieron `equals`/`hashCode` robustos para evitar bugs de identidad).
+- **Resultado de Compilación:** `javac -d out src/domain/BC1_Autenticacion/*.java` -> **0 Errores, 0 Advertencias**.
 
-/**
- * Puerto de interfaz (Repositorio) para persistir, actualizar y buscar sesiones en el sistema.
- */
-public interface SesionRepository {
+---
 
-    void guardar(Sesion sesion);
+## 10. Estructura para el Tablero Kanban / Scrum (Trello)
 
-    Optional<Sesion> buscarPorId(UUID id);
+Mapeo de Historias de Usuario para el Bounded Context de Autenticación en el tablero del proyecto:
 
-    Optional<Sesion> buscarActivaPorCodigo(String codigoUsuario);
-}
-
-VII. Análisis Estático y Control de Calidad
-SonarLint Analysis: Se realizó el escaneo estático en Visual Studio Code sobre todos los componentes del paquete BC1_Autenticacion, obteniendo 0 Bugs, 0 Vulnerabilities y 0 Code Smells (Severidades Blocker y Critical totalmente subsanadas).
-
-Verificación de Compilación (Ubuntu Linux):
-
-Bash
-javac -d out -Xlint:all src/domain/BC1_Autenticacion/*.java
-Resultado: Compilación exitosa (0 errors, 0 warnings).
-
-VIII. Trazabilidad de Versionado (Git Commits)
-El avance de esta práctica fue registrado de manera atómica mediante commits independientes en la rama BoundedContext-1:
-
-feat(style): apply Things style to CredencialesInstitucionales
-
-feat(style): apply Error Handling style with custom AutenticacionException
-
-feat(style): apply Pipeline style using Java Streams in AutenticacionService
-
-style(clean-code): enforce Persistent-Tables style and resolve SonarLint warnings
-
-IX. Referencias
-Evans, E. (2003). Domain-Driven Design: Tackling Complexity in the Heart of Software. Addison-Wesley.
-
-Lopes, C. V. (2020). Exercises in Programming Style. Chapman and Hall/CRC.
-
-Repositorio Oficial de Ejemplos de Estilos: https://github.com/crista/exercises-in-programming-style
-
+| ID | Historia de Usuario | Criterios de Aceptación | Estado |
+|---|---|---|---|
+| **HU-01** | Como estudiante, quiero iniciar sesión con mis credenciales institucionales para acceder a la plataforma de manera segura. | - Validación de código de 8 dígitos.<br>- Rechazo de credenciales vacías.<br>- Generación de token/sesión activa. | **Completado** |
+| **HU-02** | Como estudiante, quiero cerrar sesión al terminar mi uso para proteger mi confidencialidad. | - Actualización de estado a inactivo.<br>- Registro de `fechaFin`. | **Completado** |
+| **HU-03** | Como sistema, quiero invalidar sesiones concurrentes previas al iniciar una nueva sesión para evitar multi-sesiones activas. | - Búsqueda de sesión previa activa por código.<br>- Desactivación automática (`sesionPrevia.ifPresent(Sesion::desactivar)`). | **Completado** |
+| **HU-04** | Como administrador, quiero mantener trazabilidad de auditoría de los accesos (IP y hora). | - Registro inmutable de `DatosAuditoria` con zona horaria local. | **Completado** |
