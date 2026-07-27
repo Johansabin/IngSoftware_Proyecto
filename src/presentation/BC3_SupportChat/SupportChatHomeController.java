@@ -61,8 +61,34 @@ public class SupportChatHomeController {
                         main {
                             display: grid;
                             gap: 18px;
-                            grid-template-columns: 360px minmax(0, 1fr);
+                            grid-template-columns: 1fr;
                             padding: 24px;
+                        }
+
+                        .workspace {
+                            display: grid;
+                            gap: 18px;
+                            grid-template-columns: 360px minmax(0, 1fr);
+                        }
+
+                        .modules {
+                            display: grid;
+                            gap: 10px;
+                            grid-template-columns: repeat(3, minmax(0, 1fr));
+                        }
+
+                        .module {
+                            border: 1px solid var(--line);
+                            padding: 14px;
+                        }
+
+                        .module strong {
+                            display: block;
+                            margin-bottom: 6px;
+                        }
+
+                        .module button {
+                            width: 100%;
                         }
 
                         section {
@@ -138,7 +164,7 @@ public class SupportChatHomeController {
                         }
 
                         @media (max-width: 820px) {
-                            main {
+                            main, .workspace, .modules {
                                 grid-template-columns: 1fr;
                                 padding: 14px;
                             }
@@ -153,39 +179,70 @@ public class SupportChatHomeController {
 
                     <main>
                         <section>
-                            <h2>Nueva sesion</h2>
-                            <label for="psychologistId">Psicologo ID</label>
-                            <input id="psychologistId" value="22222222-2222-2222-2222-222222222222">
-                            <button onclick="startChat()">Crear chat</button>
-
-                            <label for="chatId">Chat ID</label>
-                            <input id="chatId" placeholder="Se completa al crear un chat">
-
-                            <label for="senderRole">Remitente</label>
-                            <select id="senderRole">
-                                <option value="STUDENT">Estudiante</option>
-                                <option value="PSYCHOLOGIST">Psicologo</option>
-                            </select>
-
-                            <label for="content">Mensaje</label>
-                            <textarea id="content">Hola, necesito apoyo.</textarea>
-                            <button class="secondary" onclick="sendMessage()">Enviar mensaje</button>
-
-                            <button onclick="loadActiveChats()">Ver chats activos del psicologo</button>
-                            <div id="status" class="status">Listo para probar la API.</div>
+                            <h2>Modulos del sistema</h2>
+                            <div class="modules">
+                                <div class="module">
+                                    <strong>BC1 Autenticacion</strong>
+                                    <p>Sesion institucional y auditoria.</p>
+                                    <button onclick="loadModule('/api/modules/bc1-authentication')">Probar BC1</button>
+                                </div>
+                                <div class="module">
+                                    <strong>BC2 Seguimiento Emocional</strong>
+                                    <p>Bitacora, emociones y resumen semanal.</p>
+                                    <button onclick="loadModule('/api/modules/bc2-emotional-tracking')">Probar BC2</button>
+                                </div>
+                                <div class="module">
+                                    <strong>BC3 Soporte Chat</strong>
+                                    <p>Chat anonimo con psicologo.</p>
+                                    <button onclick="loadActiveChats()">Probar BC3</button>
+                                </div>
+                                <div class="module">
+                                    <strong>BC4 Recomendaciones</strong>
+                                    <p>Catalogo de recomendaciones de bienestar.</p>
+                                    <button onclick="loadModule('/api/modules/bc4-recommendations')">Probar BC4</button>
+                                </div>
+                                <div class="module">
+                                    <strong>BC5 Notificaciones</strong>
+                                    <p>Recordatorios programados.</p>
+                                    <button onclick="loadModule('/api/modules/bc5-notifications')">Probar BC5</button>
+                                </div>
+                                <div class="module">
+                                    <strong>BC6 Privacidad</strong>
+                                    <p>Politicas y consentimientos.</p>
+                                    <button onclick="loadModule('/api/modules/bc6-privacy-security')">Probar BC6</button>
+                                </div>
+                            </div>
                         </section>
 
-                        <section>
-                            <h2>Respuesta del backend</h2>
-                            <p>Pruebas rápidas de todos los bounded contexts:</p>
-                            <button onclick="loadModule('/api/modules/bc1-authentication')">BC1 Autenticacion</button>
-                            <button onclick="loadModule('/api/modules/bc2-emotional-tracking')">BC2 Seguimiento</button>
-                            <button onclick="loadActiveChats()">BC3 Chat</button>
-                            <button onclick="loadModule('/api/modules/bc4-recommendations')">BC4 Recomendaciones</button>
-                            <button onclick="loadModule('/api/modules/bc5-notifications')">BC5 Notificaciones</button>
-                            <button onclick="loadModule('/api/modules/bc6-privacy-security')">BC6 Privacidad</button>
-                            <div id="result"></div>
-                        </section>
+                        <div class="workspace">
+                            <section>
+                                <h2>Chat de soporte</h2>
+                                <label for="psychologistId">Psicologo ID</label>
+                                <input id="psychologistId" value="22222222-2222-2222-2222-222222222222">
+                                <button onclick="startChat()">Crear chat</button>
+
+                                <label for="chatId">Chat ID</label>
+                                <input id="chatId" placeholder="Se completa al crear un chat">
+
+                                <label for="senderRole">Remitente</label>
+                                <select id="senderRole">
+                                    <option value="STUDENT">Estudiante</option>
+                                    <option value="PSYCHOLOGIST">Psicologo</option>
+                                </select>
+
+                                <label for="content">Mensaje</label>
+                                <textarea id="content">Hola, necesito apoyo.</textarea>
+                                <button class="secondary" onclick="sendMessage()">Enviar mensaje</button>
+
+                                <button onclick="loadActiveChats()">Ver chats activos del psicologo</button>
+                                <div id="status" class="status">Listo para probar la API.</div>
+                            </section>
+
+                            <section>
+                                <h2>Respuesta del backend</h2>
+                                <div id="result"></div>
+                            </section>
+                        </div>
                     </main>
 
                     <script>
