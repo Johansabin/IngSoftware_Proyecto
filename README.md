@@ -52,7 +52,7 @@ Brindar una herramienta digital que ayude a los estudiantes a monitorear su esta
 
 ### Prototipo / GUI
 
-> ⏳ Pendiente de incorporar.
+![Prototipo de la interfaz](docs/uml/Prototipo.png)
 
 ## Modelo de Dominio
 
