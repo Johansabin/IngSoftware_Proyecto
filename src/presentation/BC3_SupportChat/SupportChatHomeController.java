@@ -148,7 +148,7 @@ public class SupportChatHomeController {
                 <body>
                     <header>
                         <h1>MenteEnCasa</h1>
-                        <p>Backend integrado activo en Spring Boot. Puerto <code>8080</code>.</p>
+                        <p>Seguimiento emocional, soporte y bienestar para estudiantes.</p>
                     </header>
 
                     <main>
