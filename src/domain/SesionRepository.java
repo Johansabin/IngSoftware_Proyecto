@@ -13,7 +13,7 @@ public interface SesionRepository {
     /**
      * 
      */
-    public void guardar(sesion: Sesion)();
+    public void guardar(Sesion sesion);
 
     /**
      * @param id 
@@ -24,7 +24,7 @@ public interface SesionRepository {
     /**
      * 
      */
-    public void actualizar(sesion: Sesion)();
+    public void actualizar(Sesion sesion);
 
     /**
      * 

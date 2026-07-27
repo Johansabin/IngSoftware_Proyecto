@@ -2,6 +2,7 @@ package application.BC3_SupportChat;
 
 import BC3_SoporteChat.ChatSession;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ChatSessionAppService {
@@ -13,4 +14,6 @@ public interface ChatSessionAppService {
     void closeChat(UUID chatId);
 
     ChatSession getChat(UUID chatId);
+
+    List<ChatSession> getActiveChatsByPsychologist(UUID psychologistId);
 }
