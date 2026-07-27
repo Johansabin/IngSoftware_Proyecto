@@ -35,10 +35,7 @@ public class ChatSession {
     }
 
     public void sendMessage(Message message) {
-        if (!isActive()) {
-            throw new IllegalStateException("No se pueden enviar mensajes en una sesion cerrada");
-        }
-
+        ensureActive();
         messages.add(Objects.requireNonNull(message, "El mensaje es obligatorio"));
         auditData.registerUpdate();
     }
@@ -54,6 +51,16 @@ public class ChatSession {
 
     public boolean isActive() {
         return status == ChatSessionStatus.ACTIVE;
+    }
+
+    public boolean isAssignedTo(UUID psychologistId) {
+        return this.psychologistId.equals(Objects.requireNonNull(psychologistId, "El id del psicologo es obligatorio"));
+    }
+
+    private void ensureActive() {
+        if (!isActive()) {
+            throw new IllegalStateException("No se pueden enviar mensajes en una sesion cerrada");
+        }
     }
 
     public UUID getId() {
