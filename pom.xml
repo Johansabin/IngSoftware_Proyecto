@@ -36,10 +36,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>domain/BC3_SoporteChat/**/*.java</include>
-                        <include>application/BC3_SupportChat/**/*.java</include>
-                        <include>infrastructure/BC3_SupportChat/**/*.java</include>
-                        <include>presentation/BC3_SupportChat/**/*.java</include>
+                        <include>domain/**/*.java</include>
+                        <include>application/**/*.java</include>
+                        <include>infrastructure/**/*.java</include>
+                        <include>presentation/**/*.java</include>
                     </includes>
                 </configuration>
             </plugin>

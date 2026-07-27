@@ -15,7 +15,7 @@ public class SupportChatHomeController {
                 <head>
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <title>MenteEnCasa - BC3 Support Chat</title>
+                    <title>MenteEnCasa</title>
                     <style>
                         :root {
                             color-scheme: light;
@@ -147,8 +147,8 @@ public class SupportChatHomeController {
                 </head>
                 <body>
                     <header>
-                        <h1>MenteEnCasa - Support Chat</h1>
-                        <p>Backend BC3 activo en Spring Boot. Puerto <code>8080</code>.</p>
+                        <h1>MenteEnCasa</h1>
+                        <p>Backend integrado activo en Spring Boot. Puerto <code>8080</code>.</p>
                     </header>
 
                     <main>
@@ -177,6 +177,13 @@ public class SupportChatHomeController {
 
                         <section>
                             <h2>Respuesta del backend</h2>
+                            <p>Pruebas rápidas de todos los bounded contexts:</p>
+                            <button onclick="loadModule('/api/modules/bc1-authentication')">BC1 Autenticacion</button>
+                            <button onclick="loadModule('/api/modules/bc2-emotional-tracking')">BC2 Seguimiento</button>
+                            <button onclick="loadActiveChats()">BC3 Chat</button>
+                            <button onclick="loadModule('/api/modules/bc4-recommendations')">BC4 Recomendaciones</button>
+                            <button onclick="loadModule('/api/modules/bc5-notifications')">BC5 Notificaciones</button>
+                            <button onclick="loadModule('/api/modules/bc6-privacy-security')">BC6 Privacidad</button>
                             <div id="result"></div>
                         </section>
                     </main>
@@ -244,6 +251,13 @@ public class SupportChatHomeController {
                                 ? chats.map(renderChat).join('')
                                 : '<p>No hay chats activos para este psicologo.</p>';
                             setStatus('Consulta completada.');
+                        }
+
+                        async function loadModule(url) {
+                            const response = await fetch(url);
+                            const data = await response.json();
+                            result.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                            setStatus(`${data.boundedContext} consultado correctamente.`);
                         }
                     </script>
                 </body>
