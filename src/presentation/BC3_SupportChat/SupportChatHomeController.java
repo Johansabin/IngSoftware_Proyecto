@@ -76,7 +76,7 @@ public class SupportChatHomeController {
                         }
 
                         .hidden {
-                            display: none;
+                            display: none !important;
                         }
 
                         .login-view {
