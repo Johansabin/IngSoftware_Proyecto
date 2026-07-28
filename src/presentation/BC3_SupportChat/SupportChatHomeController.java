@@ -17,240 +17,410 @@ public class SupportChatHomeController {
                     <meta name="viewport" content="width=device-width, initial-scale=1">
                     <title>MenteEnCasa</title>
                     <style>
-                        :root {
-                            color-scheme: light;
-                            font-family: Arial, Helvetica, sans-serif;
-                            --ink: #111111;
-                            --muted: #555555;
-                            --line: #bbbbbb;
-                            --panel: #ffffff;
-                            --bg: #f5f5f5;
-                        }
-
                         * {
                             box-sizing: border-box;
                         }
 
                         body {
-                            background: var(--bg);
-                            color: var(--ink);
+                            align-items: center;
+                            background: #eeeeee;
+                            color: #111111;
+                            display: flex;
+                            font-family: Arial, Helvetica, sans-serif;
+                            justify-content: center;
                             margin: 0;
+                            min-height: 100vh;
                         }
 
-                        header {
-                            background: #ffffff;
-                            border-bottom: 1px solid var(--line);
-                            padding: 22px 28px;
-                        }
-
-                        h1 {
-                            font-size: 24px;
-                            margin: 0 0 4px;
-                        }
-
-                        h2 {
-                            font-size: 18px;
-                            margin: 0 0 14px;
-                        }
-
-                        p {
-                            color: var(--muted);
-                            margin: 0;
-                        }
-
-                        main {
-                            display: grid;
-                            gap: 18px;
-                            grid-template-columns: 1fr;
-                            padding: 24px;
-                        }
-
-                        .workspace {
-                            display: grid;
-                            gap: 18px;
-                            grid-template-columns: 360px minmax(0, 1fr);
-                        }
-
-                        .modules {
-                            display: grid;
-                            gap: 10px;
-                            grid-template-columns: repeat(3, minmax(0, 1fr));
-                        }
-
-                        .module {
-                            border: 1px solid var(--line);
-                            padding: 14px;
-                        }
-
-                        .module strong {
-                            display: block;
-                            margin-bottom: 6px;
-                        }
-
-                        .module button {
-                            width: 100%;
-                        }
-
-                        section {
-                            background: var(--panel);
-                            border: 1px solid var(--line);
-                            padding: 18px;
-                        }
-
-                        label {
-                            display: block;
-                            font-size: 13px;
-                            font-weight: 700;
-                            margin: 14px 0 6px;
-                        }
-
-                        input, select, textarea {
-                            border: 1px solid #999999;
+                        button, input, select, textarea {
                             font: inherit;
-                            padding: 10px;
-                            width: 100%;
                         }
 
-                        textarea {
-                            min-height: 92px;
-                            resize: vertical;
+                        .phone {
+                            background: #050505;
+                            border: 3px solid #222222;
+                            border-radius: 42px;
+                            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+                            height: 844px;
+                            padding: 14px;
+                            position: relative;
+                            width: 390px;
                         }
 
-                        button {
-                            background: #222222;
-                            border: 1px solid #222222;
+                        .screen {
+                            background: #ffffff;
+                            border-radius: 30px;
+                            height: 100%;
+                            overflow: hidden;
+                            position: relative;
+                        }
+
+                        .notch {
+                            background: #000000;
+                            border-radius: 0 0 16px 16px;
+                            height: 30px;
+                            left: 50%;
+                            position: absolute;
+                            top: 0;
+                            transform: translateX(-50%);
+                            width: 106px;
+                            z-index: 2;
+                        }
+
+                        .view {
+                            height: 100%;
+                            overflow-y: auto;
+                            padding: 62px 34px 34px;
+                        }
+
+                        .hidden {
+                            display: none;
+                        }
+
+                        .login-view {
+                            align-items: center;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-start;
+                            padding-top: 152px;
+                        }
+
+                        .brand {
+                            font-size: 14px;
+                            font-weight: 700;
+                            margin-bottom: 22px;
+                        }
+
+                        .avatar {
+                            height: 88px;
+                            margin-bottom: 38px;
+                            position: relative;
+                            width: 88px;
+                        }
+
+                        .avatar::before {
+                            background: #000000;
+                            border-radius: 50%;
+                            content: "";
+                            height: 88px;
+                            left: 0;
+                            position: absolute;
+                            top: 0;
+                            width: 88px;
+                        }
+
+                        .avatar::after {
+                            background:
+                                radial-gradient(circle at 50% 25%, #ffffff 0 18px, transparent 19px),
+                                radial-gradient(ellipse at 50% 78%, #ffffff 0 35px, transparent 36px);
+                            content: "";
+                            height: 88px;
+                            left: 0;
+                            position: absolute;
+                            top: 0;
+                            width: 88px;
+                        }
+
+                        .field {
+                            border: 1px solid #555555;
+                            height: 42px;
+                            margin-bottom: 18px;
+                            padding: 0 13px;
+                            width: 250px;
+                        }
+
+                        .login-options {
+                            display: flex;
+                            font-size: 12px;
+                            justify-content: space-between;
+                            margin: 34px 0 78px;
+                            width: 230px;
+                        }
+
+                        .login-button {
+                            background: #101c5c;
+                            border: 0;
                             color: #ffffff;
                             cursor: pointer;
+                            font-size: 13px;
                             font-weight: 700;
-                            margin-top: 12px;
-                            padding: 10px 14px;
+                            height: 62px;
+                            width: 260px;
                         }
 
-                        button.secondary {
-                            background: #444444;
-                            border-color: #444444;
+                        .app-header {
+                            border-bottom: 1px solid #d0d0d0;
+                            margin: -14px -18px 18px;
+                            padding: 22px 18px 14px;
+                        }
+
+                        .app-title {
+                            font-size: 18px;
+                            font-weight: 700;
+                            margin: 0;
+                        }
+
+                        .app-subtitle {
+                            color: #555555;
+                            font-size: 12px;
+                            margin: 4px 0 0;
+                        }
+
+                        .module-list {
+                            display: grid;
+                            gap: 10px;
+                        }
+
+                        .module-row {
+                            background: #ffffff;
+                            border: 1px solid #b7b7b7;
+                            cursor: pointer;
+                            padding: 12px;
+                            text-align: left;
+                            width: 100%;
+                        }
+
+                        .module-row strong {
+                            display: block;
+                            font-size: 13px;
+                            margin-bottom: 4px;
+                        }
+
+                        .module-row span {
+                            color: #555555;
+                            display: block;
+                            font-size: 12px;
+                        }
+
+                        .section-title {
+                            font-size: 15px;
+                            margin: 18px 0 10px;
+                        }
+
+                        .panel {
+                            border: 1px solid #b7b7b7;
+                            margin-top: 12px;
+                            padding: 12px;
+                        }
+
+                        .panel pre {
+                            font-family: Consolas, "Courier New", monospace;
+                            font-size: 11px;
+                            margin: 0;
+                            overflow-x: auto;
+                            white-space: pre-wrap;
+                        }
+
+                        .input {
+                            border: 1px solid #777777;
+                            height: 38px;
+                            margin-bottom: 10px;
+                            padding: 0 10px;
+                            width: 100%;
+                        }
+
+                        textarea.input {
+                            height: 76px;
+                            padding-top: 10px;
+                            resize: none;
+                        }
+
+                        .action {
+                            background: #101c5c;
+                            border: 0;
+                            color: #ffffff;
+                            cursor: pointer;
+                            font-size: 12px;
+                            font-weight: 700;
+                            height: 42px;
+                            margin: 6px 0;
+                            width: 100%;
+                        }
+
+                        .secondary-action {
+                            background: #333333;
                         }
 
                         .status {
-                            background: #ffffff;
-                            border: 1px solid var(--line);
-                            color: var(--ink);
-                            font-size: 13px;
-                            margin-top: 12px;
+                            border: 1px solid #b7b7b7;
+                            font-size: 12px;
+                            margin-top: 10px;
+                            padding: 9px;
+                        }
+
+                        .chat-card {
+                            border: 1px solid #b7b7b7;
+                            margin-top: 10px;
                             padding: 10px;
                         }
 
-                        .chat {
-                            border: 1px solid var(--line);
-                            margin-top: 12px;
-                            padding: 14px;
-                        }
-
-                        .chat strong {
+                        .chat-card strong {
                             display: block;
-                            margin-bottom: 6px;
+                            font-size: 12px;
+                            margin-bottom: 5px;
                         }
 
                         .message {
-                            background: #ffffff;
-                            border-left: 4px solid #444444;
+                            border-left: 3px solid #101c5c;
+                            font-size: 12px;
                             margin-top: 8px;
-                            padding: 8px 10px;
+                            padding: 6px 8px;
                         }
 
-                        code {
-                            background: #eeeeee;
-                            padding: 2px 5px;
+                        .back-button {
+                            background: transparent;
+                            border: 0;
+                            cursor: pointer;
+                            font-size: 12px;
+                            margin-bottom: 8px;
+                            padding: 0;
                         }
 
-                        @media (max-width: 820px) {
-                            main, .workspace, .modules {
-                                grid-template-columns: 1fr;
-                                padding: 14px;
+                        @media (max-width: 520px) {
+                            body {
+                                background: #ffffff;
+                            }
+
+                            .phone {
+                                border: 0;
+                                border-radius: 0;
+                                box-shadow: none;
+                                height: 100vh;
+                                padding: 0;
+                                width: 100vw;
+                            }
+
+                            .screen {
+                                border-radius: 0;
                             }
                         }
                     </style>
                 </head>
                 <body>
-                    <header>
-                        <h1>MenteEnCasa</h1>
-                        <p>Seguimiento emocional, soporte y bienestar para estudiantes.</p>
-                    </header>
+                    <div class="phone">
+                        <div class="screen">
+                            <div class="notch"></div>
 
-                    <main>
-                        <section>
-                            <h2>Modulos del sistema</h2>
-                            <div class="modules">
-                                <div class="module">
-                                    <strong>BC1 Autenticacion</strong>
-                                    <p>Sesion institucional y auditoria.</p>
-                                    <button onclick="loadModule('/api/modules/bc1-authentication')">Probar BC1</button>
+                            <main id="loginView" class="view login-view">
+                                <div class="brand">MenteEnCasa</div>
+                                <div class="avatar" aria-hidden="true"></div>
+                                <input id="email" class="field" value="20261234" placeholder="Email">
+                                <input id="password" class="field" value="password" type="password" placeholder="Password">
+                                <div class="login-options">
+                                    <span>Remember me</span>
+                                    <span>Forgot password</span>
                                 </div>
-                                <div class="module">
-                                    <strong>BC2 Seguimiento Emocional</strong>
-                                    <p>Bitacora, emociones y resumen semanal.</p>
-                                    <button onclick="loadModule('/api/modules/bc2-emotional-tracking')">Probar BC2</button>
-                                </div>
-                                <div class="module">
-                                    <strong>BC3 Soporte Chat</strong>
-                                    <p>Chat anonimo con psicologo.</p>
-                                    <button onclick="loadActiveChats()">Probar BC3</button>
-                                </div>
-                                <div class="module">
-                                    <strong>BC4 Recomendaciones</strong>
-                                    <p>Catalogo de recomendaciones de bienestar.</p>
-                                    <button onclick="loadModule('/api/modules/bc4-recommendations')">Probar BC4</button>
-                                </div>
-                                <div class="module">
-                                    <strong>BC5 Notificaciones</strong>
-                                    <p>Recordatorios programados.</p>
-                                    <button onclick="loadModule('/api/modules/bc5-notifications')">Probar BC5</button>
-                                </div>
-                                <div class="module">
-                                    <strong>BC6 Privacidad</strong>
-                                    <p>Politicas y consentimientos.</p>
-                                    <button onclick="loadModule('/api/modules/bc6-privacy-security')">Probar BC6</button>
-                                </div>
-                            </div>
-                        </section>
+                                <button class="login-button" onclick="login()">LOGIN</button>
+                            </main>
 
-                        <div class="workspace">
-                            <section>
-                                <h2>Chat de soporte</h2>
-                                <label for="psychologistId">Psicologo ID</label>
-                                <input id="psychologistId" value="22222222-2222-2222-2222-222222222222">
-                                <button onclick="startChat()">Crear chat</button>
+                            <main id="dashboardView" class="view hidden">
+                                <div class="app-header">
+                                    <p class="app-title">MenteEnCasa</p>
+                                    <p class="app-subtitle">Bienestar emocional universitario</p>
+                                </div>
 
-                                <label for="chatId">Chat ID</label>
-                                <input id="chatId" placeholder="Se completa al crear un chat">
+                                <h2 class="section-title">Modulos</h2>
+                                <div class="module-list">
+                                    <button class="module-row" onclick="openModule('BC1 Autenticacion', '/api/modules/bc1-authentication')">
+                                        <strong>BC1 Autenticacion</strong>
+                                        <span>Sesion institucional y auditoria.</span>
+                                    </button>
+                                    <button class="module-row" onclick="openModule('BC2 Seguimiento Emocional', '/api/modules/bc2-emotional-tracking')">
+                                        <strong>BC2 Seguimiento Emocional</strong>
+                                        <span>Bitacora, emociones y resumen semanal.</span>
+                                    </button>
+                                    <button class="module-row" onclick="openChat()">
+                                        <strong>BC3 Soporte Chat</strong>
+                                        <span>Chat anonimo con psicologo.</span>
+                                    </button>
+                                    <button class="module-row" onclick="openModule('BC4 Recomendaciones', '/api/modules/bc4-recommendations')">
+                                        <strong>BC4 Recomendaciones</strong>
+                                        <span>Recomendaciones de bienestar.</span>
+                                    </button>
+                                    <button class="module-row" onclick="openModule('BC5 Notificaciones', '/api/modules/bc5-notifications')">
+                                        <strong>BC5 Notificaciones</strong>
+                                        <span>Recordatorios programados.</span>
+                                    </button>
+                                    <button class="module-row" onclick="openModule('BC6 Privacidad', '/api/modules/bc6-privacy-security')">
+                                        <strong>BC6 Privacidad</strong>
+                                        <span>Politicas y consentimientos.</span>
+                                    </button>
+                                </div>
+                                <div id="dashboardStatus" class="status">Sesion iniciada con BC1.</div>
+                            </main>
 
-                                <label for="senderRole">Remitente</label>
-                                <select id="senderRole">
+                            <main id="moduleView" class="view hidden">
+                                <button class="back-button" onclick="showDashboard()">Volver</button>
+                                <div class="app-header">
+                                    <p id="moduleTitle" class="app-title">Modulo</p>
+                                    <p class="app-subtitle">Respuesta del bounded context</p>
+                                </div>
+                                <div id="moduleResult" class="panel"></div>
+                            </main>
+
+                            <main id="chatView" class="view hidden">
+                                <button class="back-button" onclick="showDashboard()">Volver</button>
+                                <div class="app-header">
+                                    <p class="app-title">Soporte Chat</p>
+                                    <p class="app-subtitle">Sesion anonima con psicologo</p>
+                                </div>
+                                <input id="psychologistId" class="input" value="22222222-2222-2222-2222-222222222222">
+                                <button class="action" onclick="startChat()">Crear chat</button>
+                                <input id="chatId" class="input" placeholder="Chat ID">
+                                <select id="senderRole" class="input">
                                     <option value="STUDENT">Estudiante</option>
                                     <option value="PSYCHOLOGIST">Psicologo</option>
                                 </select>
-
-                                <label for="content">Mensaje</label>
-                                <textarea id="content">Hola, necesito apoyo.</textarea>
-                                <button class="secondary" onclick="sendMessage()">Enviar mensaje</button>
-
-                                <button onclick="loadActiveChats()">Ver chats activos del psicologo</button>
-                                <div id="status" class="status">Listo para probar la API.</div>
-                            </section>
-
-                            <section>
-                                <h2>Respuesta del backend</h2>
-                                <div id="result"></div>
-                            </section>
+                                <textarea id="content" class="input">Hola, necesito apoyo.</textarea>
+                                <button class="action secondary-action" onclick="sendMessage()">Enviar mensaje</button>
+                                <button class="action" onclick="loadActiveChats()">Ver chats activos</button>
+                                <div id="chatStatus" class="status">Listo para crear una sesion.</div>
+                                <div id="chatResult"></div>
+                            </main>
                         </div>
-                    </main>
+                    </div>
 
                     <script>
-                        const statusBox = document.getElementById('status');
-                        const result = document.getElementById('result');
+                        const loginView = document.getElementById('loginView');
+                        const dashboardView = document.getElementById('dashboardView');
+                        const moduleView = document.getElementById('moduleView');
+                        const chatView = document.getElementById('chatView');
+                        const dashboardStatus = document.getElementById('dashboardStatus');
+                        const moduleTitle = document.getElementById('moduleTitle');
+                        const moduleResult = document.getElementById('moduleResult');
+                        const chatStatus = document.getElementById('chatStatus');
+                        const chatResult = document.getElementById('chatResult');
 
-                        function setStatus(text) {
-                            statusBox.textContent = text;
+                        function show(view) {
+                            loginView.classList.add('hidden');
+                            dashboardView.classList.add('hidden');
+                            moduleView.classList.add('hidden');
+                            chatView.classList.add('hidden');
+                            view.classList.remove('hidden');
+                        }
+
+                        async function login() {
+                            const response = await fetch('/api/modules/bc1-authentication');
+                            const data = await response.json();
+                            dashboardStatus.textContent = `Sesion activa para ${data.codigoUsuario}.`;
+                            show(dashboardView);
+                        }
+
+                        function showDashboard() {
+                            show(dashboardView);
+                        }
+
+                        async function openModule(title, url) {
+                            moduleTitle.textContent = title;
+                            moduleResult.innerHTML = '<pre>Cargando...</pre>';
+                            show(moduleView);
+                            const response = await fetch(url);
+                            const data = await response.json();
+                            moduleResult.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        }
+
+                        function openChat() {
+                            show(chatView);
                         }
 
                         function renderChat(chat) {
@@ -263,7 +433,7 @@ public class SupportChatHomeController {
                             `).join('');
 
                             return `
-                                <div class="chat">
+                                <div class="chat-card">
                                     <strong>Chat ${chat.id}</strong>
                                     <div>Estudiante: ${chat.studentPseudonym}</div>
                                     <div>Psicologo: ${chat.psychologistId}</div>
@@ -282,8 +452,8 @@ public class SupportChatHomeController {
                             });
                             const chat = await response.json();
                             document.getElementById('chatId').value = chat.id;
-                            result.innerHTML = renderChat(chat);
-                            setStatus('Chat creado correctamente.');
+                            chatResult.innerHTML = renderChat(chat);
+                            chatStatus.textContent = 'Chat creado correctamente.';
                         }
 
                         async function sendMessage() {
@@ -296,25 +466,18 @@ public class SupportChatHomeController {
                                 body: JSON.stringify({content, senderRole})
                             });
                             const chat = await response.json();
-                            result.innerHTML = renderChat(chat);
-                            setStatus('Mensaje enviado correctamente.');
+                            chatResult.innerHTML = renderChat(chat);
+                            chatStatus.textContent = 'Mensaje enviado correctamente.';
                         }
 
                         async function loadActiveChats() {
                             const psychologistId = document.getElementById('psychologistId').value;
                             const response = await fetch(`/api/support-chats/psychologists/${psychologistId}/active`);
                             const chats = await response.json();
-                            result.innerHTML = chats.length
+                            chatResult.innerHTML = chats.length
                                 ? chats.map(renderChat).join('')
                                 : '<p>No hay chats activos para este psicologo.</p>';
-                            setStatus('Consulta completada.');
-                        }
-
-                        async function loadModule(url) {
-                            const response = await fetch(url);
-                            const data = await response.json();
-                            result.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                            setStatus(`${data.boundedContext} consultado correctamente.`);
+                            chatStatus.textContent = 'Consulta completada.';
                         }
                     </script>
                 </body>
