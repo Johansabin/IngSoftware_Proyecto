@@ -123,6 +123,12 @@ public class SupportChatHomeController {
                             width: 88px;
                         }
 
+                        .login-form {
+                            align-items: center;
+                            display: flex;
+                            flex-direction: column;
+                        }
+
                         .field {
                             border: 1px solid #555555;
                             height: 42px;
@@ -147,13 +153,23 @@ public class SupportChatHomeController {
                             font-size: 13px;
                             font-weight: 700;
                             height: 62px;
+                            position: relative;
+                            touch-action: manipulation;
                             width: 260px;
+                            z-index: 4;
                         }
 
                         .app-header {
                             border-bottom: 1px solid #d0d0d0;
                             margin: -14px -18px 18px;
                             padding: 22px 18px 14px;
+                        }
+
+                        .app-header-row {
+                            align-items: flex-start;
+                            display: flex;
+                            gap: 12px;
+                            justify-content: space-between;
                         }
 
                         .app-title {
@@ -269,6 +285,19 @@ public class SupportChatHomeController {
                             padding: 6px 8px;
                         }
 
+                        .top-actions {
+                            align-items: center;
+                            background: #ffffff;
+                            display: flex;
+                            gap: 10px;
+                            justify-content: space-between;
+                            margin: -14px -18px 14px;
+                            padding: 14px 18px 8px;
+                            position: sticky;
+                            top: -62px;
+                            z-index: 4;
+                        }
+
                         .back-button {
                             background: #ffffff;
                             border: 1px solid #777777;
@@ -281,6 +310,15 @@ public class SupportChatHomeController {
                             position: sticky;
                             top: 0;
                             z-index: 3;
+                        }
+
+                        .logout-button {
+                            background: #ffffff;
+                            border: 1px solid #777777;
+                            cursor: pointer;
+                            font-size: 12px;
+                            font-weight: 700;
+                            padding: 8px 12px;
                         }
 
                         .bottom-back-button {
@@ -317,19 +355,26 @@ public class SupportChatHomeController {
                             <main id="loginView" class="view login-view">
                                 <div class="brand">MenteEnCasa</div>
                                 <div class="avatar" aria-hidden="true"></div>
-                                <input id="email" class="field" value="20261234" placeholder="Email">
-                                <input id="password" class="field" value="password" type="password" placeholder="Password">
-                                <div class="login-options">
-                                    <span>Remember me</span>
-                                    <span>Forgot password</span>
-                                </div>
-                                <button class="login-button" onclick="login()">LOGIN</button>
+                                <form id="loginForm" class="login-form">
+                                    <input id="email" class="field" value="20261234" placeholder="Email">
+                                    <input id="password" class="field" value="password" type="password" placeholder="Password">
+                                    <div class="login-options">
+                                        <span>Remember me</span>
+                                        <span>Forgot password</span>
+                                    </div>
+                                    <button class="login-button" type="submit">LOGIN</button>
+                                </form>
                             </main>
 
                             <main id="dashboardView" class="view hidden">
                                 <div class="app-header">
-                                    <p class="app-title">MenteEnCasa</p>
-                                    <p class="app-subtitle">Bienestar emocional universitario</p>
+                                    <div class="app-header-row">
+                                        <div>
+                                            <p class="app-title">MenteEnCasa</p>
+                                            <p class="app-subtitle">Bienestar emocional universitario</p>
+                                        </div>
+                                        <button class="logout-button" type="button" onclick="logout()">Cerrar sesion</button>
+                                    </div>
                                 </div>
 
                                 <h2 class="section-title">Modulos</h2>
@@ -363,7 +408,10 @@ public class SupportChatHomeController {
                             </main>
 
                             <main id="moduleView" class="view hidden">
-                                <button class="back-button" onclick="showDashboard()">Volver</button>
+                                <div class="top-actions">
+                                    <button class="back-button" type="button" onclick="showDashboard()">Volver</button>
+                                    <button class="logout-button" type="button" onclick="logout()">Cerrar sesion</button>
+                                </div>
                                 <div class="app-header">
                                     <p id="moduleTitle" class="app-title">Modulo</p>
                                     <p class="app-subtitle">Respuesta del bounded context</p>
@@ -373,7 +421,10 @@ public class SupportChatHomeController {
                             </main>
 
                             <main id="chatView" class="view hidden">
-                                <button class="back-button" onclick="showDashboard()">Volver</button>
+                                <div class="top-actions">
+                                    <button class="back-button" type="button" onclick="showDashboard()">Volver</button>
+                                    <button class="logout-button" type="button" onclick="logout()">Cerrar sesion</button>
+                                </div>
                                 <div class="app-header">
                                     <p class="app-title">Soporte Chat</p>
                                     <p class="app-subtitle">Sesion anonima con psicologo</p>
@@ -396,6 +447,7 @@ public class SupportChatHomeController {
                     </div>
 
                     <script>
+                        const loginForm = document.getElementById('loginForm');
                         const loginView = document.getElementById('loginView');
                         const dashboardView = document.getElementById('dashboardView');
                         const moduleView = document.getElementById('moduleView');
@@ -420,6 +472,14 @@ public class SupportChatHomeController {
                             const data = await response.json();
                             dashboardStatus.textContent = `Sesion activa para ${data.codigoUsuario}.`;
                             show(dashboardView);
+                        }
+
+                        function logout() {
+                            moduleResult.innerHTML = '';
+                            chatResult.innerHTML = '';
+                            chatStatus.textContent = 'Listo para crear una sesion.';
+                            dashboardStatus.textContent = 'Sesion iniciada con BC1.';
+                            show(loginView);
                         }
 
                         function showDashboard() {
@@ -495,6 +555,11 @@ public class SupportChatHomeController {
                                 : '<p>No hay chats activos para este psicologo.</p>';
                             chatStatus.textContent = 'Consulta completada.';
                         }
+
+                        loginForm.addEventListener('submit', event => {
+                            event.preventDefault();
+                            login();
+                        });
                     </script>
                 </body>
                 </html>
