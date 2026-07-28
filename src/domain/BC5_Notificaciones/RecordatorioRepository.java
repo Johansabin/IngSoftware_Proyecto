@@ -1,31 +1,19 @@
 package BC5_Notificaciones;
 
-import java.io.*;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 /**
- * 
+ * Puerto del dominio para persistir Recordatorio.
+ * Firma alineada con el diagrama de clases (MenteenCasa.png).
  */
 public interface RecordatorioRepository {
 
-    /**
-     * @param recordatorio
-     */
-    public void guardar(Recordatorio recordatorio);
+    void adicionar(Recordatorio recordatorio);
 
-    /**
-     * 
-     */
-    public void buscarActivos();
+    void eliminar(UUID id);
 
-    /**
-     * @param estudianteId
-     */
-    public void buscarPorEstudiante(UUID estudianteId);
+    Recordatorio buscar(UUID id);
 
-    /**
-     * @param id
-     */
-    public void eliminar(UUID id);
-
+    List<Recordatorio> listarPorEstudiante(UUID estudianteId);
 }

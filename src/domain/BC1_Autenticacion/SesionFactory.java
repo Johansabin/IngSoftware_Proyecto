@@ -1,24 +1,21 @@
 package BC1_Autenticacion;
 
-import java.io.*;
-import java.util.*;
-
 /**
- * 
+ * Fabrica encargada de instanciar objetos Sesion de manera controlada.
  */
 public class SesionFactory {
 
-    /**
-     * Default constructor
-     */
-    public SesionFactory() {
+    private SesionFactory() {
+        // Constructor privado para ocultar el público implícito (SonarLint S1118)
     }
 
     /**
-     * @param credenciales
+     * Crea una nueva instancia de Sesion inicializada.
+     *
+     * @param codigoUsuario Codigo del usuario que inicia sesion.
+     * @return Una nueva instancia de Sesion.
      */
-    public static void crear(CredencialesInstitucionales credenciales) {
-        // TODO implement here
+    public static Sesion registrarSesion(String codigoUsuario) {
+        return new Sesion(codigoUsuario);
     }
-
 }

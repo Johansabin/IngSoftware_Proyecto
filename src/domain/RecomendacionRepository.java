@@ -1,5 +1,7 @@
 package domain;
 
+import BC4_Recomendaciones.Recomendacion;
+
 import java.io.*;
 import java.util.*;
 
@@ -22,7 +24,7 @@ public interface RecomendacionRepository {
     /**
      * 
      */
-    public void listarPorTipo(tipo: String): List<Recomendacion>();
+    public List<Recomendacion> listarPorTipo(String tipo);
 
     /**
      * 
