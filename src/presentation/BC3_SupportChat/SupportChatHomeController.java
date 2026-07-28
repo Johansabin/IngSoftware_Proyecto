@@ -30,6 +30,7 @@ public class SupportChatHomeController {
                             justify-content: center;
                             margin: 0;
                             min-height: 100vh;
+                            padding: 12px;
                         }
 
                         button, input, select, textarea {
@@ -41,10 +42,10 @@ public class SupportChatHomeController {
                             border: 3px solid #222222;
                             border-radius: 42px;
                             box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
-                            height: 844px;
+                            height: min(844px, calc(100vh - 24px));
                             padding: 14px;
                             position: relative;
-                            width: 390px;
+                            width: min(390px, calc(100vw - 24px));
                         }
 
                         .screen {
@@ -70,7 +71,8 @@ public class SupportChatHomeController {
                         .view {
                             height: 100%;
                             overflow-y: auto;
-                            padding: 62px 34px 34px;
+                            padding: 62px 34px 90px;
+                            scrollbar-width: thin;
                         }
 
                         .hidden {
@@ -268,24 +270,35 @@ public class SupportChatHomeController {
                         }
 
                         .back-button {
-                            background: transparent;
-                            border: 0;
+                            background: #ffffff;
+                            border: 1px solid #777777;
                             cursor: pointer;
+                            display: inline-flex;
                             font-size: 12px;
-                            margin-bottom: 8px;
-                            padding: 0;
+                            font-weight: 700;
+                            margin-bottom: 12px;
+                            padding: 8px 12px;
+                            position: sticky;
+                            top: 0;
+                            z-index: 3;
+                        }
+
+                        .bottom-back-button {
+                            margin-top: 18px;
+                            width: 100%;
                         }
 
                         @media (max-width: 520px) {
                             body {
                                 background: #ffffff;
+                                padding: 0;
                             }
 
                             .phone {
                                 border: 0;
                                 border-radius: 0;
                                 box-shadow: none;
-                                height: 100vh;
+                                height: 100dvh;
                                 padding: 0;
                                 width: 100vw;
                             }
@@ -356,6 +369,7 @@ public class SupportChatHomeController {
                                     <p class="app-subtitle">Respuesta del bounded context</p>
                                 </div>
                                 <div id="moduleResult" class="panel"></div>
+                                <button class="back-button bottom-back-button" onclick="showDashboard()">Volver</button>
                             </main>
 
                             <main id="chatView" class="view hidden">
@@ -376,6 +390,7 @@ public class SupportChatHomeController {
                                 <button class="action" onclick="loadActiveChats()">Ver chats activos</button>
                                 <div id="chatStatus" class="status">Listo para crear una sesion.</div>
                                 <div id="chatResult"></div>
+                                <button class="back-button bottom-back-button" onclick="showDashboard()">Volver</button>
                             </main>
                         </div>
                     </div>
@@ -397,6 +412,7 @@ public class SupportChatHomeController {
                             moduleView.classList.add('hidden');
                             chatView.classList.add('hidden');
                             view.classList.remove('hidden');
+                            view.scrollTop = 0;
                         }
 
                         async function login() {
