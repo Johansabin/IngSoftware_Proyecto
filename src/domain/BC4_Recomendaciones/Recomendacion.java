@@ -1,71 +1,32 @@
 package BC4_Recomendaciones;
 
-import java.util.Objects;
 import java.util.UUID;
+import comun.DatosAuditoria;
 
-/**
- * 
- */
 public class Recomendacion {
 
-    /**
-     * Default constructor
-     */
-    public Recomendacion() {
-        this("Respiracion consciente", "Realizar una pausa breve para respirar y reducir tension.", "Bienestar");
-    }
+    private final UUID id;
+    private final String titulo;
+    private final String contenido;
+    private final String tipo;
+    private final DatosAuditoria auditoria;
 
     public Recomendacion(String titulo, String contenido, String tipo) {
         this.id = UUID.randomUUID();
-        this.titulo = Objects.requireNonNull(titulo, "El titulo de la recomendacion es obligatorio");
-        this.contenido = Objects.requireNonNull(contenido, "El contenido de la recomendacion es obligatorio");
-        this.tipo = Objects.requireNonNull(tipo, "El tipo de recomendacion es obligatorio");
+        this.titulo = titulo;
+        this.contenido = contenido;
+        this.tipo = tipo;
         this.auditoria = new DatosAuditoria();
     }
 
-    /**
-     * 
-     */
-    private UUID id;
-
-    /**
-     * 
-     */
-    private String titulo;
-
-    /**
-     * 
-     */
-    private String contenido;
-
-    /**
-     * 
-     */
-    private String tipo;
-
-    /**
-     * 
-     */
-    private DatosAuditoria auditoria;
-
-    public UUID getId() {
-        return id;
+    // Clean Code: Función pequeña con una sola responsabilidad
+    public boolean esDelTipo(String tipo) {
+        return this.tipo != null && this.tipo.equalsIgnoreCase(tipo);
     }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getContenido() {
-        return contenido;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public DatosAuditoria getAuditoria() {
-        return auditoria;
-    }
-
+    public UUID getId() { return id; }
+    public String getTitulo() { return titulo; }
+    public String getContenido() { return contenido; }
+    public String getTipo() { return tipo; }
+    public DatosAuditoria getAuditoria() { return auditoria; }
 }
