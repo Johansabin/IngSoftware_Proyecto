@@ -1,0 +1,55 @@
+package BC4_Recomendaciones;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+class RecomendacionTest {
+
+    @Test
+    @DisplayName("Rechaza un titulo vacio lanzando excepcion de dominio")
+    void rechazaTituloVacio() {
+        assertThrows(RecomendacionInvalidaException.class,
+                () -> new Recomendacion("  ", "contenido", "CONSEJO"));
+    }
+
+    @Test
+    @DisplayName("Rechaza un contenido nulo lanzando excepcion de dominio")
+    void rechazaContenidoNulo() {
+        assertThrows(RecomendacionInvalidaException.class,
+                () -> new Recomendacion("Titulo", null, "CONSEJO"));
+    }
+
+    @Test
+    @DisplayName("esDelTipo compara sin distinguir mayusculas")
+    void comparaTipoSinDistinguirMayusculas() {
+        Recomendacion recomendacion = new Recomendacion("Caminata", "15 minutos", "ACTIVIDAD");
+
+        assertTrue(recomendacion.esDelTipo("actividad"));
+        assertFalse(recomendacion.esDelTipo("CONSEJO"));
+    }
+
+    @Test
+    @DisplayName("actualizarContenido reemplaza titulo y contenido validos")
+    void actualizaContenidoValido() {
+        Recomendacion recomendacion = new Recomendacion("Viejo", "Texto viejo", "CONSEJO");
+
+        recomendacion.actualizarContenido("Nuevo", "Texto nuevo");
+
+        assertEquals("Nuevo", recomendacion.getTitulo());
+        assertEquals("Texto nuevo", recomendacion.getContenido());
+    }
+
+    @Test
+    @DisplayName("actualizarContenido rechaza valores invalidos")
+    void rechazaActualizacionInvalida() {
+        Recomendacion recomendacion = new Recomendacion("Titulo", "Contenido", "CONSEJO");
+
+        assertThrows(RecomendacionInvalidaException.class,
+                () -> recomendacion.actualizarContenido("   ", "Texto"));
+    }
+}
