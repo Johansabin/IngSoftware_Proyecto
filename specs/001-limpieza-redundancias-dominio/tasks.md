@@ -2,7 +2,7 @@
 
 Espec: `specs/001-limpieza-redundancias-dominio/spec.md` (aprobada).
 Rama de trabajo: rama nueva local `spec-001-limpieza-repositorios`, creada desde `main` (ver plan, D3).
-Convenciones: comandos desde la raíz del repo; commits locales, nunca push a `main` (AGENTS.md). T9 requiere credenciales del remoto que este entorno no tiene: la ejecuta el usuario (consola con credenciales o web); NO bloquea T1–T8 ni T10.
+Convenciones: comandos desde la raíz del repo; commits locales, nunca push a `main` (AGENTS.md). T9 requirió credenciales del remoto que este entorno no tiene: la ejecutó el usuario (consola con credenciales) y ya está hecha; no bloqueó a T1–T8 ni a T10.
 
 - [x] **T1. Volver a `main`, crear la rama de trabajo y capturar el baseline de compilación.** RF-3
   - Evidencia: en `spec-001-limpieza-repositorios`, creada desde `main` (`add2ef0`); `/tmp/opencode/spec001-baseline-antes.txt` = 11 líneas, único error preexistente de BC4 (`src/domain/BC4_Recomendaciones/RecomendacionRepositoryI.java:[6,8]`).
@@ -31,10 +31,19 @@ Convenciones: comandos desde la raíz del repo; commits locales, nunca push a `m
 - [x] **T8. Verificación final: raíz vacía, greps, baseline y commits.** RF-1, RF-2, RF-3, RNF-2
   - Evidencia: PASA. `ls src/domain/*.java` = 0 (solo carpetas `BC*/` y `comun/`); los dos greps de T2 = 0 resultados; `diff` baseline-antes vs `/tmp/opencode/spec001-baseline-despues.txt` = VACÍO (11 líneas cada uno, mismo y único error de BC4, ninguno nuevo); 5 commits (uno por interfaz); las 5 canónicas siguen en su BC. Único `import domain.*` restante del repo: `docs/generated/LayeredArchitecture_Packages/infrastructure.mysql/RecordatorioRepositoryImpl.java:3` (fuera del build; previsto por la spec).
   - Hecho cuando: `ls src/domain/*.java` no devuelve nada; los dos greps de T2 devuelven 0 resultados; `mvn -q package 2>&1 | tee /tmp/opencode/spec001-baseline-despues.txt` produce `diff` vacío contra el baseline de T1 (mismo error único de BC4, ninguno nuevo); `git log --oneline` muestra 5 commits, uno por interfaz; las 5 canónicas siguen existiendo.
-- [ ] **T9. Eliminar la rama remota `Bounded_05` y cerrar el PR viejo (credenciales; NO bloqueante).** RF-4, RF-6, RF-7, RNF-2, RNF-3
+- [x] **T9. Eliminar la rama remota `Bounded_05` y cerrar el PR viejo (credenciales; NO bloqueante).** RF-4, RF-6, RF-7, RNF-2, RNF-3
   - Previo obligatorio (RNF-3): aviso al equipo antes de ejecutar.
   - Hecho cuando: tras `git fetch origin`, `git rev-list --count main..origin/Bounded_05` = 0 (si > 0: ABORTAR y escalar — RF-6); `git ls-remote --heads origin Bounded_05` devuelve salida vacía tras `git push origin --delete Bounded_05` ejecutado con credenciales (usuario, consola o web); el PR viejo queda cerrado, sin fusionar (verificado en el host, no asumido); la rama local `Bounded-05` (remanente del intento anterior) queda fuera del alcance de esta spec: no se borra sin permiso del usuario; y la evidencia queda registrada en este archivo y en MEMORY.md (T10).
-  - Estado: PENDIENTE: requiere credenciales del usuario para `git push origin --delete Bounded_05` y cerrar el PR viejo; salvaguarda verificada (0 commits inalcanzables). No bloquea T1–T8/T10.
+  - Evidencia (REPORTADA por el usuario desde su consola con credenciales; este entorno no tiene SSH y no puede verificarla): salvaguarda previa verificada, `git rev-list --count main..origin/Bounded_05` = 0; rama remota duplicada `Bounded_05` eliminada con `git push origin --delete Bounded_05` ejecutado por el usuario con credenciales; PR asociado: **no existe ningún PR abierto** para la cabecera `Bounded_05` (comprobado por el usuario con `gh`/web) → RF-7 queda satisfecho sin necesidad de cerrar nada; la rama local `Bounded-05` permanece intacta, fuera del alcance de esta spec.
+  - Honestidad de la evidencia: el agente no pudo comprobar el remoto (un `git ls-remote --heads origin Bounded_05` en este entorno falla con `ssh_askpass: ... No such file or directory` / `git@github.com: Permission denied (publickey)` → `fatal: No se pudo leer del repositorio remoto`, código 128). La eliminación de la rama y la ausencia de PR son, por tanto, evidencia **reportada por el usuario**, no verificada por el agente.
 - [x] **T10. Registro documental y `MEMORY.md`.** RNF-2; criterios de finalización 5 y 6
   - Evidencia: `MEMORY.md` actualizado con el estado real de la spec 001 (5 commits hechos; T9 pendiente de credenciales; remanente de la rama local `Bounded-05` anotado; pendiente de validación por el reviewer) y este `tasks.md` con la evidencia de T1–T8 y T10.
   - Hecho cuando: `MEMORY.md` refleja la spec 001 (5 commits hechos y estado de T9: completada o pendiente de credenciales, único remanente anotado) y las tareas de este archivo quedan marcadas con su evidencia.
+
+## Evidencia persistente (el baseline vivía en /tmp)
+
+Los archivos `/tmp/opencode/spec001-baseline-antes.txt` y `/tmp/opencode/spec001-baseline-despues.txt` no son perennes; su contenido se registra aquí para no perderlo.
+
+- Comando: `mvn -q package 2>&1` (11 líneas de salida).
+- Error único (idéntico antes y después de la limpieza): `src/domain/BC4_Recomendaciones/RecomendacionRepositoryI.java:[6,8] interface RecomendacionRepository is public, should be declared in a file named RecomendacionRepository.java` + `Failed to execute goal ...maven-compiler-plugin:3.13.0:compile (default-compile) on project menteencasa-bc3: Compilation failure`.
+- Conclusión (RF-3): baseline-antes y baseline-despues idénticos (`diff` vacío); el @reviewer lo reprodujo de forma independiente con la misma salida.
