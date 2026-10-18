@@ -1,2 +1,6 @@
 target/
 *.class
+
+# Ficheros locales: no se versionan
+MEMORY.md
+AGENTS.md
