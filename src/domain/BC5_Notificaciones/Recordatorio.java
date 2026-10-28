@@ -16,6 +16,15 @@ public class Recordatorio {
     private boolean activo;
 
     public Recordatorio(UUID estudianteId, String mensaje, LocalDateTime fechaProgramada) {
+        if (mensaje == null || mensaje.trim().isEmpty()) {
+            throw new IllegalArgumentException("El mensaje no puede ser nulo o vacío");
+        }
+        if (estudianteId == null) {
+            throw new IllegalArgumentException("El estudianteId no puede ser nulo");
+        }
+        if (fechaProgramada == null) {
+            throw new IllegalArgumentException("La fecha programada no puede ser nula");
+        }
         this.id = UUID.randomUUID();
         this.estudianteId = estudianteId;
         this.mensaje = mensaje;
