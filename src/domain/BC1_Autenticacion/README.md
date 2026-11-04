@@ -1,45 +1,47 @@
 # MenteEnCasa — Plataforma de Apoyo Emocional Universitario
-> **Entregable Oficial — Laboratorio 12: Principios SOLID y Calidad de Código**  
-> **Asignatura:** Ingeniería de Software I  
-> **Alumno Responsable:** Rodrigo Ramos Mamani  
-> **Bounded Context Asignado:** `BC1_Autenticacion`  
-> **Lenguaje:** Java 17 | **Arquitectura:** Clean Architecture & Domain-Driven Design (DDD)  
+> **Módulo / Bounded Context:** `BC1_Autenticacion`  
+> **Alumno Responsable:** Ramos Mamani, Rodrigo Abraham  
+> **Curso:** Ingeniería de Software I — Proyecto Final 2026-B  
+> **Lenguaje:** Java 17 | **Framework:** Spring Boot 3.3.2 | **Arquitectura:** Clean Architecture & Domain-Driven Design (DDD)
 
 ---
 
-## 1. Propósito del Proyecto y del Submódulo BC1_Autenticación
+## Índice
 
-### 1.1 Propósito del Proyecto (MenteEnCasa)
-**MenteEnCasa** es una plataforma integral orientada al acompañamiento, bienestar y apoyo emocional de estudiantes universitarios. Su objetivo principal es proveer un entorno digital accesible, seguro y confidencial que permita a los estudiantes:
-- Registrar y monitorear su estado emocional diario (Bitácora Emocional).
-- Recibir recomendaciones personalizadas de bienestar y prevención de estrés/ansiedad.
-- Interactuar en canales de soporte y asistencia con seudónimos anónimos.
-- Gestionar notificaciones y recordatorios de autocuidado.
-
-### 1.2 Propósito del Submódulo `BC1_Autenticacion`
-El Bounded Context de Autenticación (`BC1_Autenticacion`) respeta la estructura y nomenclatura original definida en el repositorio base del equipo. Sus responsabilidades clave son:
-- Validar las credenciales institucionales de los estudiantes (código universitario y hash de contraseña).
-- Controlar el ciclo de vida de las sesiones de usuario (inicio, invalidación de sesiones previas concurrentes y cierre seguro).
-- Garantizar la trazabilidad de auditoría en los accesos (IP y marcas de tiempo).
-- Proveer contratos desacoplados (interfaces repositorio) para la persistencia sin acoplarse a frameworks externos.
+1. [Propósito del Submódulo BC1_Autenticación](#1-propósito-del-submódulo-bc1_autenticación)
+2. [Funcionalidades de Alto Nivel y Casos de Uso](#2-funcionalidades-de-alto-nivel-y-casos-de-uso)
+3. [Endpoints REST de Autenticación](#3-endpoints-rest-de-autenticación)
+4. [Tecnologías Usadas](#4-tecnologías-usadas)
+5. [Modelo de Dominio (DDD)](#5-modelo-de-dominio-ddd)
+6. [Vista General de Arquitectura](#6-vista-general-de-arquitectura)
+7. [Justificación del Pipeline CI/CD (Jenkinsfile)](#7-justificación-del-pipeline-cicd-jenkinsfile)
+8. [Ejecución del Contenedor Docker](#8-ejecución-del-contenedor-docker)
+9. [Principios SOLID y Prácticas Clean Code](#9-principios-solid-y-prácticas-clean-code)
+10. [Reporte de Pruebas y Análisis Estático](#10-reporte-de-pruebas-y-análisis-estático)
 
 ---
 
-## 2. Funcionalidades de Alto Nivel
+## 1. Propósito del Submódulo `BC1_Autenticacion`
 
-### 2.1 Diagrama de Casos de Uso (UML)
-El módulo interactúa mediante los siguientes casos de uso principales:
-1. **UC01: Iniciar Sesión Institucional** — El estudiante ingresa su código universitario de 8 dígitos y contraseña; el sistema valida las credenciales y genera una nueva `Sesion` activa, desactivando cualquier sesión previa concurrente.
-2. **UC02: Cerrar Sesión** — El estudiante finaliza su sesión activa, registrando la marca de tiempo de cierre (`fechaFin`) y cambiando el estado a inactivo.
-3. **UC03: Consultar Sesiones Activas** — El sistema filtra y gestiona las sesiones activas mediante procesamiento funcional (Stream API / Pipeline).
+El Bounded Context de Autenticación (`BC1_Autenticacion`) es el encargado de gestionar el acceso seguro de los estudiantes a la plataforma **MenteEnCasa**. Sus responsabilidades principales son:
+- **Validación de Credenciales Institucionales:** Verificación semántica y formal del código universitario (8 dígitos) y contraseña cifrada.
+- **Gestión del Ciclo de Vida de Sesiones:** Registro de inicios de sesión, invalidación automática de sesiones previas concurrentes y cierre seguro de sesión.
+- **Trazabilidad y Auditoría:** Registro de metadatos de acceso (dirección IP de origen y marcas de tiempo con zona horaria local).
+- **Desacoplamiento Tecnológico:** Definición de contratos mediante puertos (`SesionRepository`) cumpliendo con Clean Architecture.
 
-### 2.2 Prototipo / Interfaz Gráfica (Login GUI)
+---
+
+## 2. Funcionalidades de Alto Nivel y Casos de Uso
+
+1. **UC01: Iniciar Sesión Institucional** — El estudiante ingresa sus credenciales; el sistema valida el formato institucional, audita el acceso y genera una `Sesion` activa cerrando cualquier sesión concurrente previa.
+2. **UC02: Cerrar Sesión** — El estudiante finaliza su sesión, registrando la fecha de cierre (`fechaFin`) y cambiando el estado a inactivo.
+3. **UC03: Consulta de Sesiones** — Filtrado y gestión de sesiones activas mediante procesamiento funcional (Stream API / Pipeline).
+
+### Prototipo de Interfaz (Login GUI)
 ```
 +-------------------------------------------------------------+
 |                     MENTE EN CASA - LOGIN                   |
 +-------------------------------------------------------------+
-|  [ Instituto / Universidad Nacional ]                       |
-|                                                             |
 |  Código Universitario (8 dígitos):                          |
 |  [ 20214567               ]                                 |
 |                                                             |
@@ -52,188 +54,156 @@ El módulo interactúa mediante los siguientes casos de uso principales:
 
 ---
 
-## 3. Modelo de Dominio (DDD)
+## 3. Endpoints REST de Autenticación
 
-El diseño del Bounded Context sigue estrictamente los patrones tácticos de **Domain-Driven Design (DDD)**:
+El módulo expone una API RESTful a través de `AutenticacionController` bajo el prefijo `/api/v1/auth`:
 
-- **Entidad (`Sesion`):** Objeto con identidad única (`UUID id`) y ciclo de vida mutable (`activa`, `fechaInicio`, `fechaFin`). Las entidades se comparan por su identidad.
-- **Value Object (`CredencialesInstitucionales`):** Objeto inmutable que encapsula el código universitario y el hash de contraseña, validando reglas de negocio semánticas (ej. formato de 8 dígitos con `esCodigoValido()`).
-- **Value Object (`DatosAuditoria`):** Objeto inmutable que registra metadatos de trazabilidad (`ipOrigen` y `fechaRegistro` en zona horaria local).
-- **Factory (`SesionFactory`):** Fábrica estática encargada de instanciar de manera controlada nuevas sesiones.
-- **Repository Interface (`SesionRepository`):** Puerto de dominio que define los contratos de persistencia sin acoplamiento tecnológico.
+### 3.1. Iniciar Sesión
+* **Método HTTP:** `POST`
+* **Ruta:** `/api/v1/auth/login`
+* **Descripción:** Autentica al estudiante utilizando su código universitario y contraseña. Si es exitoso, retorna la sesión activa creada.
 
----
-
-## 4. Vista General de Arquitectura (Clean Architecture & DDD)
-
-```
-src/
-└── domain/
-    └── BC1_Autenticacion/
-        ├── AutenticacionService.java      # Servicio de Dominio (Orquestación de Login/Logout)
-        ├── CredencialesInstitucionales.java # Value Object (Credenciales y validación)
-        ├── DatosAuditoria.java            # Value Object (Trazabilidad IP y fecha)
-        ├── Sesion.java                    # Entidad de Dominio (Ciclo de vida de sesión)
-        ├── SesionFactory.java             # Fábrica de Creación de Sesiones
-        ├── SesionRepository.java          # Puerto / Contrato de Persistencia
-        └── AutenticacionException.java    # Excepción de Negocio de Dominio
-```
-
----
-
-## 5. Convenciones de Codificación
-
-Se respetaron las convenciones establecidas en el proyecto base y Clean Code:
-- **Nomenclatura:** PascalCase para Clases y Factories (`SesionFactory`), camelCase para métodos y variables (`iniciarSesion`, `codigoUniversitario`), UPPER_SNAKE_CASE para constantes.
-- **Inmutabilidad:** Uso de modificadores `private final` en atributos de Value Objects y Entidades.
-- **Cero Comodines en Imports:** Importaciones explícitas de clases individuales.
-- **Validaciones Defensivas:** Control temprano de nulos y vacíos en constructores lanzando `IllegalArgumentException`.
-
-### Fragmento de Código (Convenciones y Encapsulamiento):
-```java
-package BC1_Autenticacion;
-
-public class DatosAuditoria {
-
-    private final String ipOrigen;
-    private final LocalDateTime fechaRegistro;
-
-    public DatosAuditoria(String ipOrigen) {
-        if (ipOrigen == null || ipOrigen.trim().isEmpty()) {
-            throw new IllegalArgumentException("La dirección IP de origen no puede ser nula o vacía.");
-        }
-        this.ipOrigen = ipOrigen;
-        this.fechaRegistro = LocalDateTime.now(ZoneId.of("America/Lima"));
-    }
-
-    public String getIpOrigen() {
-        return ipOrigen;
-    }
-
-    public LocalDateTime getFechaRegistro() {
-        return fechaRegistro;
-    }
+**Request Body (`LoginRequest`):**
+```json
+{
+  "codigoUniversitario": "20214567",
+  "contrasena": "hashSeguro123",
+  "ipOrigen": "192.168.1.15"
 }
 ```
 
----
-
-## 6. Estilos de Codificación (Basado en *Exercises in Programming Style*)
-
-Se aplicaron cuatro estilos arquitectónicos de programación en el módulo:
-1. **Things (Orientación a Objetos):** Encapsulación de datos y validaciones semánticas en objetos de valor (`CredencialesInstitucionales`).
-2. **Error / Exception Handling:** Control explícito de fallos con excepciones de dominio (`AutenticacionException`).
-3. **Pipeline (Stream API):** Procesamiento funcional de colecciones de sesiones (`obtenerSesionesActivasPorUsuario`).
-4. **Persistent-Tables:** Definición de contratos de almacenamiento abstracto mediante interfaces repositorio (`SesionRepository`).
-
----
-
-## 7. Prácticas Clean Code
-
-- **Nombres descriptivos y orientados al dominio:** Clases y métodos que reflejan el lenguaje ubicuo (`iniciarSesion`, `desactivar`, `esCodigoValido`).
-- **Funciones pequeñas y de responsabilidad única:** Métodos privados y públicos concisos que realizan una única tarea.
-- **Inmutabilidad robusta con equals/hashCode:** Implementación correcta de igualdad por identidad (Entidades) y por valor (Value Objects).
-
----
-
-## 8. Principios SOLID (Laboratorio 12)
-
-Se aplicaron rigurosamente tres principios SOLID en el módulo `BC1_Autenticacion`:
-
-### 1. SRP (Single Responsibility Principle - Principio de Responsabilidad Única)
-* **Explicación:** Cada clase tiene una y solo una razón para cambiar. Por ejemplo, `Sesion` gestiona exclusivamente el estado de la sesión, mientras que `SesionFactory` tiene la única responsabilidad de instanciarla, y `CredencialesInstitucionales` valida las credenciales.
-* **Fragmento de Código (`SesionFactory` - Responsabilidad única de creación):**
-```java
-package BC1_Autenticacion;
-
-public class SesionFactory {
-
-    private SesionFactory() {
-        // Constructor privado para ocultar el constructor público implícito
-    }
-
-    public static Sesion registrarSesion(String codigoUsuario) {
-        return new Sesion(codigoUsuario);
-    }
+**Response Success (`200 OK`):**
+```json
+{
+  "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "codigoUsuario": "20214567",
+  "fechaInicio": "2026-10-12T10:00:00",
+  "fechaFin": null,
+  "activa": true
 }
 ```
 
-### 2. OCP (Open/Closed Principle - Principio Abierto/Cerrado)
-* **Explicación:** Las entidades y objetos de valor están abiertos a extensión mediante comportamiento encapsulado pero cerrados a modificación directa de sus invariantes, permitiendo validar formatos (ej. `esCodigoValido()`) sin modificar el servicio de autenticación.
-* **Fragmento de Código (`CredencialesInstitucionales` - Extensibilidad en validación):**
-```java
-package BC1_Autenticacion;
+**Responses Error:**
+* `400 Bad Request`: Si el request es nulo, faltan campos obligatorios o el código universitario no cumple con el formato de 8 dígitos (`^\d{8}$`).
+* `401 Unauthorized`: Si las credenciales no son válidas o la autenticación falla.
 
-public class CredencialesInstitucionales {
+---
 
-    private final String codigoUniversitario;
-    private final String hashContrasena;
+### 3.2. Cerrar Sesión
+* **Método HTTP:** `POST`
+* **Ruta:** `/api/v1/auth/logout`
+* **Descripción:** Invalida una sesión activa mediante su identificador único de sesión (`sessionId`).
 
-    public CredencialesInstitucionales(String codigoUniversitario, String hashContrasena) {
-        if (codigoUniversitario == null || codigoUniversitario.isBlank()) {
-            throw new IllegalArgumentException("El código universitario no puede estar vacío.");
-        }
-        if (hashContrasena == null || hashContrasena.isBlank()) {
-            throw new IllegalArgumentException("La contraseña hash no puede estar vacía.");
-        }
-        this.codigoUniversitario = codigoUniversitario;
-        this.hashContrasena = hashContrasena;
-    }
-
-    public boolean esCodigoValido() {
-        return this.codigoUniversitario.matches("^\\d{8}$");
-    }
+**Request Body (`LogoutRequest`):**
+```json
+{
+  "sessionId": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 }
 ```
 
-### 3. DIP (Dependency Inversion Principle - Principio de Inversión de Dependencias)
-* **Explicación:** Los módulos de alto nivel (`AutenticacionService`) no dependen de detalles de infraestructura de bajo nivel (bases de datos o ORMs), sino de abstracciones (puertos/interfaces como `SesionRepository`).
-* **Fragmento de Código (`AutenticacionService` dependiendo de la abstracción `SesionRepository`):**
-```java
-package BC1_Autenticacion;
+**Response Success (`200 OK`):**
+* Sin contenido (Empty body), indicando que la sesión fue cerrada exitosamente.
 
-public class AutenticacionService {
+**Responses Error:**
+* `400 Bad Request`: Si el request o `sessionId` es nulo.
+* `404 Not Found`: Si la sesión especificada no existe en el sistema.
 
-    private final SesionRepository sesionRepository; // Inyección de abstracción (Puerto)
+---
 
-    public AutenticacionService(SesionRepository sesionRepository) {
-        this.sesionRepository = sesionRepository;
-    }
+## 4. Tecnologías Usadas
 
-    public Optional<Sesion> iniciarSesion(CredencialesInstitucionales credenciales, DatosAuditoria auditoria) {
-        if (credenciales == null || auditoria == null || !credenciales.esCodigoValido()) {
-            return Optional.empty();
-        }
-        Optional<Sesion> sesionPrevia = sesionRepository.buscarActivaPorCodigo(credenciales.getCodigoUniversitario());
-        sesionPrevia.ifPresent(Sesion::desactivar);
+El módulo está construido utilizando un stack tecnológico moderno y robusto:
+* **Lenguaje:** Java 17 (Con soporte LTS, inmutabilidad y características avanzadas del lenguaje).
+* **Framework Principal:** Spring Boot 3.3.2 (Inyección de dependencias, controladores REST, auto-configuración).
+* **Gestión de Dependencias y Build:** Apache Maven 3.9+.
+* **Pruebas Unitarias y Mocking:** JUnit 5 y Mockito.
+* **Cobertura de Código:** JaCoCo Maven Plugin.
+* **Contenedorización:** Docker (Multi-stage builds con `eclipse-temurin:17-jre-jammy`).
+* **CI/CD Pipeline:** Jenkins (automatización de compilación, pruebas, análisis estático y seguridad).
+* **Análisis Estático de Código:** SonarQube / SonarScanner.
+* **Pruebas Automatizadas Complementarias:** Postman / Newman (Funcionales), Apache JMeter (Rendimiento), OWASP ZAP (Seguridad).
 
-        Sesion nuevaSesion = SesionFactory.registrarSesion(credenciales.getCodigoUniversitario());
-        sesionRepository.guardar(nuevaSesion);
+---
 
-        return Optional.of(nuevaSesion);
-    }
-}
+## 5. Modelo de Dominio (DDD)
+
+El diseño respeta los patrones tácticos de **Domain-Driven Design**:
+* **Entidad (`Sesion`):** Objeto con identidad única (`UUID id`) y estado mutable controlado (`activa`, `fechaInicio`, `fechaFin`).
+* **Value Object (`CredencialesInstitucionales`):** Objeto inmutable que encapsula el código universitario y contraseña, autovalidando su formato institucional.
+* **Value Object (`DatosAuditoria`):** Encapsula metadatos de trazabilidad (`ipOrigen` y `fechaRegistro`).
+* **Factory (`SesionFactory`):** Fábrica estática encargada de instanciar de forma controlada nuevas sesiones.
+* **Repository Interface (`SesionRepository`):** Puerto de dominio que desacopla la lógica de negocio de los detalles de persistencia.
+
+---
+
+## 6. Vista General de Arquitectura
+
+El proyecto implementa **Clean Architecture** organizado en capas:
+- **`presentation`**: Controladores REST (`AutenticacionController`, DTOs).
+- **`application`**: Casos de uso y servicios de aplicación.
+- **`domain`**: Entidades, Value Objects, Factories y contratos de Repositorios (Independiente de frameworks).
+- **`infrastructure`**: Implementaciones concretas de persistencia y adaptadores.
+
+---
+
+## 7. Justificación del Pipeline CI/CD (`Jenkinsfile`)
+
+El archivo `Jenkinsfile` ubicado en la raíz del proyecto automatiza el ciclo de vida de integración continua y entrega continua (CI/CD) para garantizar la calidad del software antes de llevarlo a producción:
+
+1. **`Git Checkout`**: Obtiene la última versión del código fuente desde el repositorio en cada evento de commit.
+2. **`Build & Unit Tests (Maven)`**: Ejecuta `mvn clean package`, compilando el código, ejecutando todas las pruebas unitarias y generando los reportes de cobertura JaCoCo.
+3. **`Static Analysis (SonarQube)`**: Ejecuta `sonar-scanner` para detectar bugs, vulnerabilidades, code smells y asegurar la mantenibilidad del código.
+4. **`Docker Build & Run (Deployment)`**: Construye la imagen Docker optimizada del microservicio (`menteencasa-bc1:latest`) y levanta un contenedor temporal en el puerto `8080`.
+5. **`Functional Tests (Newman/Postman)`**: Valida el comportamiento correcto de los endpoints REST expuestos ejecutando colecciones de pruebas funcionales automatizadas.
+6. **`Performance Tests (JMeter)`**: Ejecuta pruebas de estrés y rendimiento sobre la aplicación en ejecución.
+7. **`Security Tests (OWASP ZAP)`**: Realiza un escaneo automatizado de vulnerabilidades web sobre el contenedor desplegado.
+8. **`Post Actions`**: Bloque seguro `always` que detiene y elimina automáticamente el contenedor de prueba (`docker stop` / `docker rm`), y `failure` para notificar errores al equipo mediante el Kanban (GitHub Projects / Trello).
+
+---
+
+## 8. Ejecución del Contenedor Docker
+
+Gracias al archivo **Dockerfile optimizado (multi-stage)** con Java 17, puedes compilar y ejecutar la aplicación en cualquier entorno contenedorizado sin necesidad de tener Maven ni JDK instalados localmente.
+
+### 8.1. Construir la imagen Docker
+Ejecuta el siguiente comando en la raíz del proyecto:
+```bash
+docker build -t menteencasa-bc1:latest .
+```
+
+### 8.2. Ejecutar el contenedor
+Levanta el contenedor exponiendo el puerto `8080` de la aplicación:
+```bash
+docker run -d -p 8080:8080 --name app-bc1 menteencasa-bc1:latest
+```
+
+### 8.3. Verificar el funcionamiento
+Puedes realizar una petición de prueba al endpoint de login mediante `curl`:
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"codigoUniversitario":"20214567","contrasena":"hashSeguro123","ipOrigen":"127.0.0.1"}'
+```
+
+### 8.4. Detener y eliminar el contenedor
+```bash
+docker stop app-bc1
+docker rm app-bc1
 ```
 
 ---
 
-## 9. Reporte de Análisis Estático (SonarLint)
+## 9. Principios SOLID y Prácticas Clean Code
 
-Se analizó el código asegurando compatibilidad completa con el repositorio base del equipo (`BC1_Autenticacion`):
-- **Bugs Detectados:** 0
-- **Vulnerabilities Detectadas:** 0
-- **Code Smells Críticos/Bloqueantes:** 0 (Se mantuvieron los nombres de paquete acordes al repositorio base y se añadieron `equals`/`hashCode` robustos para evitar bugs de identidad).
-- **Resultado de Compilación:** `javac -d out src/domain/BC1_Autenticacion/*.java` -> **0 Errores, 0 Advertencias**.
+- **SRP (Responsabilidad Única):** Clases cohesivas donde `Sesion` maneja el estado, `SesionFactory` la creación y `CredencialesInstitucionales` la validación.
+- **OCP (Abierto/Cerrado):** Reglas de validación encapsuladas en value objects extensibles sin alterar el servicio de autenticación.
+- **DIP (Inversión de Dependencias):** El servicio de autenticación depende exclusivamente de la abstracción `SesionRepository`.
+- **Clean Code:** Uso riguroso de inmutabilidad (`private final`), validaciones tempranas con `Objects.requireNonNull`, manejo de `Optional` en lugar de nulos y nombres basados en el lenguaje ubicuo del dominio.
 
 ---
 
-## 10. Estructura para el Tablero Kanban / Scrum (Trello)
+## 10. Reporte de Pruebas y Análisis Estático
 
-Mapeo de Historias de Usuario para el Bounded Context de Autenticación en el tablero del proyecto:
-
-| ID | Historia de Usuario | Criterios de Aceptación | Estado |
-|---|---|---|---|
-| **HU-01** | Como estudiante, quiero iniciar sesión con mis credenciales institucionales para acceder a la plataforma de manera segura. | - Validación de código de 8 dígitos.<br>- Rechazo de credenciales vacías.<br>- Generación de token/sesión activa. | **Completado** |
-| **HU-02** | Como estudiante, quiero cerrar sesión al terminar mi uso para proteger mi confidencialidad. | - Actualización de estado a inactivo.<br>- Registro de `fechaFin`. | **Completado** |
-| **HU-03** | Como sistema, quiero invalidar sesiones concurrentes previas al iniciar una nueva sesión para evitar multi-sesiones activas. | - Búsqueda de sesión previa activa por código.<br>- Desactivación automática (`sesionPrevia.ifPresent(Sesion::desactivar)`). | **Completado** |
-| **HU-04** | Como administrador, quiero mantener trazabilidad de auditoría de los accesos (IP y hora). | - Registro inmutable de `DatosAuditoria` con zona horaria local. | **Completado** |
+- **Pruebas Unitarias:** Cobertura completa de casos de éxito y fallo para controladores, servicios y value objects.
+- **SonarQube / SonarLint:** 0 Bugs, 0 Vulnerabilidades y 0 Code Smells bloqueantes.
+- **Compilación:** Verificada exitosamente con Java 17 y Spring Boot 3.3.2.
