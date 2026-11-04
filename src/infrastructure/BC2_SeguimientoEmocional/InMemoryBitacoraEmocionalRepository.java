@@ -1,4 +1,8 @@
-package BC2_SeguimientoEmocional;
+package infrastructure.BC2_SeguimientoEmocional;
+
+import BC2_SeguimientoEmocional.BitacoraEmocional;
+import BC2_SeguimientoEmocional.BitacoraEmocionalRepository;
+import BC2_SeguimientoEmocional.Emocion;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,7 +29,7 @@ import java.util.stream.Collectors;
  * {@code BitacoraEmocionalRepository} necesita una implementacion concreta
  * para poder demostrar el estilo Persistent-Tables.</p>
  */
-public class BitacoraEmocionalRepositoryImpl implements BitacoraEmocionalRepository {
+public class InMemoryBitacoraEmocionalRepository implements BitacoraEmocionalRepository {
 
     // "Tabla" bitacoras: estudianteId -> bitacora
     private final Map<UUID, BitacoraEmocional> tablaBitacoras = new HashMap<>();

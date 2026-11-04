@@ -21,12 +21,16 @@ public class Emocion {
     private final String descripcion;
 
     public Emocion(LocalDate fecha, String tipo, EscalaEmocional escala, String descripcion) {
-        this.fecha = Objects.requireNonNull(fecha, "La fecha es obligatoria");
-        this.tipo = Objects.requireNonNull(tipo, "El tipo de emocion es obligatorio");
-        this.escala = Objects.requireNonNull(escala, "La escala emocional es obligatoria");
-        this.descripcion = descripcion;
-        this.id = UUID.randomUUID();
+    this.fecha = Objects.requireNonNull(fecha, "La fecha es obligatoria");
+    Objects.requireNonNull(tipo, "El tipo de emocion es obligatorio");
+    if (tipo.isBlank()) {
+        throw new IllegalArgumentException("El tipo de emocion no puede estar vacio");
     }
+    this.tipo = tipo;
+    this.escala = Objects.requireNonNull(escala, "La escala emocional es obligatoria");
+    this.descripcion = descripcion;
+    this.id = UUID.randomUUID();
+}
 
     public UUID getId() {
         return id;
