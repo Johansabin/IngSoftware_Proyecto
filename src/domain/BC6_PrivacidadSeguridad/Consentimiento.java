@@ -1,21 +1,15 @@
 package BC6_PrivacidadSeguridad;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.*;
+import java.util.UUID;
 
-/**
- * 
- */
 public class Consentimiento {
 
-    /**
-     * Default constructor
-     */
-    public Consentimiento() {
-        this(UUID.randomUUID(), true);
-    }
+    private final UUID id;
+    private final UUID estudianteId;
+    private final LocalDate fechaAceptacion;
+    private final boolean aceptado;
 
     public Consentimiento(UUID estudianteId, boolean aceptado) {
         this.id = UUID.randomUUID();
@@ -24,40 +18,8 @@ public class Consentimiento {
         this.aceptado = aceptado;
     }
 
-    /**
-     * 
-     */
-    private UUID id;
-
-    /**
-     * 
-     */
-    private UUID estudianteId;
-
-    /**
-     * 
-     */
-    private LocalDate fechaAceptacion;
-
-    /**
-     * 
-     */
-    private boolean aceptado;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getEstudianteId() {
-        return estudianteId;
-    }
-
-    public LocalDate getFechaAceptacion() {
-        return fechaAceptacion;
-    }
-
-    public boolean isAceptado() {
-        return aceptado;
-    }
-
+    public UUID getId() { return id; }
+    public UUID getEstudianteId() { return estudianteId; }
+    public LocalDate getFechaAceptacion() { return fechaAceptacion; }
+    public boolean isAceptado() { return aceptado; }
 }

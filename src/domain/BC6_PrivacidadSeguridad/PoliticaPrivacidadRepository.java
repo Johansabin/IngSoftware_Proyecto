@@ -1,26 +1,9 @@
 package BC6_PrivacidadSeguridad;
 
-import java.io.*;
-import java.util.*;
+import java.util.Optional;
 
-/**
- * 
- */
 public interface PoliticaPrivacidadRepository {
-
-    /**
-     * @param politica
-     */
-    public void guardar(PoliticaPrivacidad politica);
-
-    /**
-     * 
-     */
-    public void buscarVigente();
-
-    /**
-     * @param version
-     */
-    public void buscarPorVersion(String version);
-
+    void guardar(PoliticaPrivacidad politica);
+    Optional<PoliticaPrivacidad> buscarVigente();
+    Optional<PoliticaPrivacidad> buscarPorVersion(String version);
 }
