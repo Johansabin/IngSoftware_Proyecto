@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Laboratorio 06 - Pruebas Funcionales con Selenium y xUnit (JUnit 5)
+ * Laboratorio 06 - Pruebas Funcionales con Selenium y xUnit (JUnit 6)
  * Funcionalidad bajo prueba: "Create Product" (Spring Boot Web App)
  */
 public class CreateProductSeleniumXUnitTest {
