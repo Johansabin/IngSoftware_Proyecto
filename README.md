@@ -23,7 +23,7 @@ MenteEnCasa es un proyecto de software orientado al apoyo emocional de estudiant
 | Integrante | Bounded Context (Módulo) | Responsabilidad principal |
 |---|---|---|
 | Ramos Mamani, Rodrigo Abraham | BC1 – Autenticación | Inicio de sesión y validación de credenciales institucionales |
-| Gama Llicahua, Fernando Antonio | BC2 – Seguimiento Emocional | Registro de emociones, bitácora y resumen semanal |
+| Ramos Chambi, Luis Enrique | BC2 – Seguimiento Emocional | Registro de emociones, bitácora y resumen semanal |
 | Huamani Sabina, Johan Diego | BC3 – Soporte Chat | Chat anónimo entre estudiante y psicólogo |
 | Villanueva Flores, Diego Mauricio | BC4 – Recomendaciones | Catálogo de recomendaciones de bienestar |
 | Canqui Ecos, Diego | BC5 – Notificaciones | Recordatorios programados |
