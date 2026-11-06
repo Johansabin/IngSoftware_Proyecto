@@ -5,13 +5,16 @@
 * **Curso:** Ingeniería de Software II  
 * **Docente:** DSc. Edgar Sarmiento Calisaya  
 * **Tema:** Automatización de Pruebas Funcionales (Caja Negra)  
-* **Herramientas:** Selenium WebDriver 4.26.0, JUnit 5 (xUnit), Maven, Java 21, Chromium / ChromeDriver  
+* **Lenguaje:** Java 17 / 21  
+* **Framework xUnit:** JUnit 6 (`org.junit.jupiter:junit-jupiter:6.1.3`)  
+* **Herramienta de Cobertura:** JaCoCo (`jacoco-maven-plugin:0.8.15`)  
+* **Herramientas Adicionales:** Selenium WebDriver 4.26.0, Maven, Chromium / ChromeDriver  
 
 ---
 
 ## 1. Resumen y Objetivos
 
-Este proyecto contiene la solución integral para el **Laboratorio 06**, cuyo objetivo es **diseñar y automatizar pruebas funcionales de caja negra** para la funcionalidad **"Create Product"** del aplicativo web [SpringBootWebApp](https://github.com/springframeworkguru/springbootwebapp), empleando **Selenium WebDriver** y el framework **xUnit (JUnit 5)**.
+Este proyecto contiene la solución integral para el **Laboratorio 06**, cuyo objetivo es **diseñar y automatizar pruebas funcionales de caja negra** para la funcionalidad **"Create Product"** del aplicativo web [SpringBootWebApp](https://github.com/springframeworkguru/springbootwebapp), empleando **Selenium WebDriver**, el framework **xUnit (JUnit 6)** y análisis de cobertura de código con **JaCoCo**.
 
 ### Estructura del Laboratorio
 
@@ -19,9 +22,9 @@ Este proyecto contiene la solución integral para el **Laboratorio 06**, cuyo ob
 labs/lab06-pruebas-funcionales/
 ├── README.md                      # Documentación completa y reporte de entregables
 ├── app/
-│   └── springbootwebapp/          # Aplicación bajo prueba (SUT - Spring Boot + Thymeleaf)
-└── tests/                         # Proyecto de automatización con Selenium y JUnit 5
-    ├── pom.xml                    # Dependencias: selenium-java 4.26.0, junit-jupiter 5.11.3
+│   └── springbootwebapp/          # Aplicación bajo prueba (SUT - Spring Boot + Thymeleaf con JaCoCo)
+└── tests/                         # Proyecto de automatización con Selenium, JUnit 6 y JaCoCo
+    ├── pom.xml                    # Dependencias: selenium-java 4.26.0, junit-jupiter 6.1.3, jacoco 0.8.15
     └── src/
         ├── main/java/
         │   └── dev/selenium/getting_started/
@@ -49,9 +52,9 @@ Se aplicaron técnicas de **Caja Negra** (Partición de Clases de Equivalencia y
 
 ## 3. Entregable 2: Proyecto de Automatización de Pruebas
 
-El código de pruebas está desacoplado y estructurado según las buenas prácticas de Selenium WebDriver y JUnit 5:
+El código de pruebas está desacoplado y estructurado según las buenas prácticas de Selenium WebDriver y JUnit 6:
 
-1. **Ciclo de vida xUnit:**
+1. **Ciclo de vida xUnit (JUnit 6):**
    * `@BeforeEach`: Inicializa el `ChromeDriver` con opciones optimizadas para ejecución local o en servidores headless (`--headless=new`, `--no-sandbox`, `--disable-dev-shm-usage`).
    * `@Test`: Un método anotado por cada caso de prueba del diseño tabular con aserciones semánticas (`assertTrue`, `assertEquals`, `assertNotNull`).
    * `@AfterEach`: Ejecuta `driver.quit()` garantizando el cierre seguro de los procesos del navegador.
@@ -80,7 +83,7 @@ java -jar target/spring-boot-web-0.0.1-SNAPSHOT.jar --server.port=8083
 ```
 *Verificar que responda en:* `http://localhost:8083`
 
-### Paso 2: Ejecutar la suite de pruebas xUnit (JUnit 5)
+### Paso 2: Ejecutar la suite de pruebas xUnit (JUnit 6) y generar cobertura JaCoCo
 
 En otra terminal, entrar a la carpeta de pruebas:
 ```bash
@@ -98,7 +101,7 @@ mvn exec:java -Dexec.mainClass="dev.selenium.getting_started.UsingSeleniumTest"
 
 ---
 
-## 5. Entregable 3: Reporte de Ejecución de Pruebas (xUnit)
+## 5. Entregable 3: Reporte de Ejecución de Pruebas (xUnit con JUnit 6)
 
 ### Resumen de Resultados
 
@@ -131,3 +134,24 @@ mvn exec:java -Dexec.mainClass="dev.selenium.getting_started.UsingSeleniumTest"
 
 Los archivos XML detallados del reporte generado por Maven Surefire se encuentran en:
 `tests/target/surefire-reports/TEST-pe.edu.unsa.is2.CreateProductSeleniumXUnitTest.xml`.
+
+---
+
+## 6. Reporte de Cobertura de Código (JaCoCo)
+
+Tanto el proyecto de automatización (`tests/`) como la aplicación web (`springbootwebapp/`) tienen configurado el plugin **`jacoco-maven-plugin:0.8.15`**:
+
+1. **En el proyecto de pruebas (`tests/`):**
+   Al ejecutar `mvn clean test`, JaCoCo instrumenta las clases y genera el reporte HTML en:
+   * `labs/lab06-pruebas-funcionales/tests/target/site/jacoco/index.html`
+
+2. **En la aplicación web (`springbootwebapp/`):**
+   Al ejecutar `mvn clean test` o `mvn clean package`, JaCoCo genera el reporte de cobertura de los componentes del backend en:
+   * `labs/lab06-pruebas-funcionales/app/springbootwebapp/target/site/jacoco/index.html`
+
+Para abrir el reporte en el navegador:
+```bash
+xdg-open labs/lab06-pruebas-funcionales/tests/target/site/jacoco/index.html
+# o
+xdg-open labs/lab06-pruebas-funcionales/app/springbootwebapp/target/site/jacoco/index.html
+```
