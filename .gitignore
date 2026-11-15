@@ -1,6 +1,13 @@
 target/
 *.class
 
-# Ficheros locales: no se versionan
+# Logs y reportes generados de pruebas de rendimiento
+jmeter.log
+performance-tests/results/
+
+# Ficheros locales de flujo SDD y agentes: no se versionan
 MEMORY.md
 AGENTS.md
+.agents/
+.opencode/
+specs/
