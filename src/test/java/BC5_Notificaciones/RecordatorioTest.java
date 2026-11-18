@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RecordatorioTest {
+class RecordatorioTest {
 
     @Test
-    public void Constructor_MensajeVacio_LanzaExcepcion() {
+    void Constructor_MensajeVacio_LanzaExcepcion() {
         // Arrange
         UUID estudianteId = UUID.randomUUID();
         String mensajeInvalido = "";
@@ -24,7 +24,7 @@ public class RecordatorioTest {
     }
     
     @Test
-    public void Constructor_DatosValidos_CreaInstancia() {
+    void Constructor_DatosValidos_CreaInstancia() {
         // Arrange
         UUID estudianteId = UUID.randomUUID();
         String mensajeValido = "Cita con el psicólogo";
@@ -42,7 +42,7 @@ public class RecordatorioTest {
     }
 
     @Test
-    public void Desactivar_RecordatorioActivo_QuedaInactivo() {
+    void Desactivar_RecordatorioActivo_QuedaInactivo() {
         // Arrange
         UUID estudianteId = UUID.randomUUID();
         Recordatorio recordatorio = new Recordatorio(estudianteId, "Revisar tarea", LocalDateTime.now().plusDays(1));
