@@ -77,8 +77,10 @@ class SesionTest {
         assertEquals(s1, s1);
         assertNotEquals(s1, s2);
         assertNotEquals(s1.hashCode(), s2.hashCode());
-        assertNotEquals(s1, null);
-        assertNotEquals(s1, "otroObjeto");
+        Object nulo=null;
+        assertNotEquals(s1,nulo);
+        Object otro="otroObjeto";
+        assertNotEquals(s1,otro);
     }
 
     @Test

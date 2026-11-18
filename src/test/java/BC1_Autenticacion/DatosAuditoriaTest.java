@@ -51,7 +51,9 @@ class DatosAuditoriaTest {
 
         // Act & Assert
         assertEquals(a1, a1);
-        assertNotEquals(a1, null);
-        assertNotEquals(a1, "otraClase");
+        Object nulo=null;
+        assertNotEquals(a1,nulo);
+        Object otra="otraClase";
+        assertNotEquals(a1,otra);
     }
 }

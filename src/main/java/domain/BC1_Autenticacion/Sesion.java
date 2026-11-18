@@ -1,6 +1,7 @@
 package BC1_Autenticacion;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 /**
@@ -8,6 +9,7 @@ import java.util.UUID;
  * Es un elemento clave del dominio dentro del contexto de autenticación.
  */
 public class Sesion {
+    private static final ZoneId ZONA=ZoneId.of("America/Lima");
 
     /**
      * Identificador único de la sesión (UUID).
@@ -46,7 +48,7 @@ public class Sesion {
         }
         this.id = UUID.randomUUID();
         this.codigoUsuario = codigoUsuario;
-        this.fechaInicio = LocalDateTime.now();
+        this.fechaInicio = LocalDateTime.now(ZONA);
         this.activa = true;
     }
 
@@ -55,7 +57,7 @@ public class Sesion {
      */
     public void desactivar() {
         this.activa = false;
-        this.fechaFin = LocalDateTime.now();
+        this.fechaFin = LocalDateTime.now(ZONA);
     }
 
     /**

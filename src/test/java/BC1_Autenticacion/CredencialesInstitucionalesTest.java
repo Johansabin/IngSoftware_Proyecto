@@ -100,7 +100,9 @@ class CredencialesInstitucionalesTest {
         assertEquals(c1, c2);
         assertEquals(c1.hashCode(), c2.hashCode());
         assertNotEquals(c1, c3);
-        assertNotEquals(c1, null);
-        assertNotEquals(c1, "otroTipo");
+        Object nulo=null;
+        assertNotEquals(c1,nulo);
+        Object otro="otroTipo";
+        assertNotEquals(c1,otro);
     }
 }
