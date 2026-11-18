@@ -7,6 +7,8 @@ import BC1_Autenticacion.Sesion;
 import BC1_Autenticacion.SesionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,30 +35,10 @@ class AutenticacionControllerValidacionesTest {
         assertEquals(400,respuesta.getStatusCode().value());
     }
 
-    @Test
-    void loginSinCodigoRetorna400() {
-        ResponseEntity<Sesion> respuesta=controller.login(new LoginRequest(null,"pw","10.0.0.1"));
-        assertEquals(400,respuesta.getStatusCode().value());
-        verifyNoInteractions(service);
-    }
-
-    @Test
-    void loginSinContrasenaRetorna400() {
-        ResponseEntity<Sesion> respuesta=controller.login(new LoginRequest("20210001",null,"10.0.0.1"));
-        assertEquals(400,respuesta.getStatusCode().value());
-        verifyNoInteractions(service);
-    }
-
-    @Test
-    void loginConContrasenaVaciaRetorna400() {
-        ResponseEntity<Sesion> respuesta=controller.login(new LoginRequest("20210001","   ","10.0.0.1"));
-        assertEquals(400,respuesta.getStatusCode().value());
-        verifyNoInteractions(service);
-    }
-
-    @Test
-    void loginConCodigoDeFormatoInvalidoRetorna400() {
-        ResponseEntity<Sesion> respuesta=controller.login(new LoginRequest("abc123","pw","10.0.0.1"));
+    @ParameterizedTest
+    @CsvSource(value={"NULL,pw","20210001,NULL","20210001,'   '","abc123,pw"},nullValues="NULL")
+    void loginConDatosInvalidosRetorna400(String codigo,String contrasena) {
+        ResponseEntity<Sesion> respuesta=controller.login(new LoginRequest(codigo,contrasena,"10.0.0.1"));
         assertEquals(400,respuesta.getStatusCode().value());
         verifyNoInteractions(service);
     }
