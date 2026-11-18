@@ -1,6 +1,8 @@
 package comun;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 public class DatosAuditoria {
 
@@ -9,8 +11,14 @@ public class DatosAuditoria {
 
     // Constructor para registros nuevos
     public DatosAuditoria() {
-        this.creadoEn = LocalDateTime.now();
-        this.actualizadoEn = LocalDateTime.now();
+        this(Clock.system(ZoneOffset.UTC));
+    }
+
+    // Constructor con Clock explicito para zona horaria controlada y testabilidad
+    public DatosAuditoria(Clock clock) {
+        LocalDateTime ahora = LocalDateTime.now(clock);
+        this.creadoEn = ahora;
+        this.actualizadoEn = ahora;
     }
 
     // Constructor para rehidratación (Clean Code: Claridad de inicialización)

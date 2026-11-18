@@ -49,7 +49,7 @@ class InMemoryRecordatorioRepository implements RecordatorioRepository {
     }
 }
 
-public class RecordatorioRepositoryTest {
+class RecordatorioRepositoryTest {
 
     private InMemoryRecordatorioRepository repository;
     private UUID estudianteId;
