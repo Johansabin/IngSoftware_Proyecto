@@ -19,6 +19,8 @@ import java.util.UUID;
  */
 public class BitacoraEmocionalAppServiceImpl implements BitacoraEmocionalAppService {
 
+    private static final String MSG_ESTUDIANTE_OBLIGATORIO = "El id del estudiante es obligatorio";
+
     private final BitacoraEmocionalRepository bitacoraRepository;
 
     public BitacoraEmocionalAppServiceImpl(BitacoraEmocionalRepository bitacoraRepository) {
@@ -28,7 +30,7 @@ public class BitacoraEmocionalAppServiceImpl implements BitacoraEmocionalAppServ
 
     @Override
     public void registrarEmocion(UUID estudianteId, Emocion emocion) {
-        Objects.requireNonNull(estudianteId, "El id del estudiante es obligatorio");
+        Objects.requireNonNull(estudianteId, MSG_ESTUDIANTE_OBLIGATORIO);
         Objects.requireNonNull(emocion, "La emocion a registrar es obligatoria");
 
         BitacoraEmocional bitacora = bitacoraRepository.buscarPorEstudiante(estudianteId)
@@ -39,7 +41,7 @@ public class BitacoraEmocionalAppServiceImpl implements BitacoraEmocionalAppServ
 
     @Override
     public ResumenSemanal obtenerResumenSemanal(UUID estudianteId, LocalDate semana) {
-        Objects.requireNonNull(estudianteId, "El id del estudiante es obligatorio");
+        Objects.requireNonNull(estudianteId, MSG_ESTUDIANTE_OBLIGATORIO);
         Objects.requireNonNull(semana, "La semana es obligatoria");
 
         BitacoraEmocional bitacora = bitacoraRepository.buscarPorEstudiante(estudianteId)
@@ -51,7 +53,7 @@ public class BitacoraEmocionalAppServiceImpl implements BitacoraEmocionalAppServ
 
     @Override
     public List<Emocion> obtenerHistorial(UUID estudianteId) {
-        Objects.requireNonNull(estudianteId, "El id del estudiante es obligatorio");
+        Objects.requireNonNull(estudianteId, MSG_ESTUDIANTE_OBLIGATORIO);
 
         return bitacoraRepository.buscarPorEstudiante(estudianteId)
                 .map(BitacoraEmocional::getRegistros)
