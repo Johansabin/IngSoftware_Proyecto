@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servicio de dominio que orquesta el analisis emocional de una bitacora.
@@ -17,9 +19,12 @@ import java.util.stream.Collectors;
  * es una funcion pura ({@code Function<Entrada, Salida>}) sin estado
  * compartido entre pasos; las funciones se encadenan con {@code andThen}
  * formando una tuberia de transformaciones, y solo el ultimo eslabon
- * produce un efecto observable (imprimir el resultado).</p>
+ * produce un efecto observable (registrar el resultado en el log, sin volcar
+ * datos emocionales del estudiante).</p>
  */
 public class AnalisisEmocionalService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalisisEmocionalService.class);
 
     // Umbral de dias con el mismo tipo de emocion de estres para
     // considerar que existe un patron sostenido (no un evento aislado).
@@ -43,8 +48,8 @@ public class AnalisisEmocionalService {
                 contarDiasDePaz(registros),
                 inicioDeSemana(semana));
 
-        ResumenSemanal resumen = obtenerRegistrosDeLaSemana.andThen(construirResumen).apply(bitacora);
-        imprimirResumen(resumen);
+        obtenerRegistrosDeLaSemana.andThen(construirResumen).apply(bitacora);
+        registrarResumen();
     }
 
     /**
@@ -71,7 +76,7 @@ public class AnalisisEmocionalService {
             .andThen(detectarTiposConPatron)
             .apply(bitacora);
 
-        imprimirPatrones(patrones);
+        registrarPatrones(patrones);
     }
 
     private static List<Emocion> filtrarPorSemana(List<Emocion> registros, LocalDate semana) {
@@ -113,15 +118,17 @@ public class AnalisisEmocionalService {
         return fecha.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
     }
 
-    private static void imprimirResumen(ResumenSemanal resumen) {
-        System.out.println("Resumen semanal: " + resumen);
+    // Privacidad: el log nunca incluye el ResumenSemanal ni los tipos de emocion
+    // del estudiante; solo mensajes genericos y conteos agregados.
+    private static void registrarResumen() {
+        LOGGER.info("Resumen semanal generado");
     }
 
-    private static void imprimirPatrones(List<String> patrones) {
+    private static void registrarPatrones(List<String> patrones) {
         if (patrones.isEmpty()) {
-            System.out.println("No se detectaron patrones de estres sostenido.");
+            LOGGER.info("No se detectaron patrones de estres sostenido");
             return;
         }
-        System.out.println("Patrones de estres detectados en: " + String.join(", ", patrones));
+        LOGGER.info("Se detectaron {} patron(es) de estres sostenido", patrones.size());
     }
 }

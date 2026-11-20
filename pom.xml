@@ -63,6 +63,14 @@
                     <mainClass>presentation.BC3_SupportChat.MenteEnCasaSupportChatApplication</mainClass>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                  <argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                </configuration>
+              </plugin>
         </plugins>
     </build>
 </project>
