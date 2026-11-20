@@ -18,18 +18,26 @@ import java.time.LocalDateTime;
  */
 public final class DatosAuditoria {
 
+    private static final ZoneId ZONA_POR_DEFECTO = ZoneId.of("America/Lima");
+
+    private final Clock reloj;
     private final LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 
     public DatosAuditoria() {
-        LocalDateTime ahora = LocalDateTime.now();
+        this(Clock.system(ZONA_POR_DEFECTO));
+    }
+
+    public DatosAuditoria(Clock reloj) {
+        this.reloj = Objects.requireNonNull(reloj, "El reloj no puede ser nulo");
+        LocalDateTime ahora = LocalDateTime.now(this.reloj);
         this.fechaCreacion = ahora;
         this.fechaActualizacion = ahora;
     }
 
     /** Marca esta bitacora como modificada, actualizando la fecha al momento actual. */
     public void marcarModificacion() {
-        this.fechaActualizacion = LocalDateTime.now();
+        this.fechaActualizacion = LocalDateTime.now(reloj);
     }
 
     public LocalDateTime getFechaCreacion() {
