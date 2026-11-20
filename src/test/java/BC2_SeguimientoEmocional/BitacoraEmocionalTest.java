@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 class BitacoraEmocionalTest {
 
@@ -57,6 +58,7 @@ class BitacoraEmocionalTest {
     void getRegistros_noPermiteModificarLaLista() {
         // Arrange
         Emocion e = emocion(LUNES, "calma", 2);
+        List<Emocion> registros = bitacora.getRegistros();
 
         // Act & Assert
         assertThrows(UnsupportedOperationException.class, () -> bitacora.getRegistros().add(e));
