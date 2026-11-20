@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Implementacion en memoria del repositorio de bitacoras emocionales.
@@ -57,7 +56,7 @@ public class InMemoryBitacoraEmocionalRepository implements BitacoraEmocionalRep
             .orElseGet(ArrayList::new)
             .stream()
             .filter(emocion -> dentroDeRango(emocion, desde, hasta))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private static boolean dentroDeRango(Emocion emocion, LocalDate desde, LocalDate hasta) {

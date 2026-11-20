@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +68,7 @@ public class AnalisisEmocionalService {
             conteos -> conteos.entrySet().stream()
                 .filter(entrada -> entrada.getValue() >= MINIMO_DIAS_PATRON)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
 
         List<String> patrones = obtenerRegistrosDeEstres
             .andThen(agruparPorTipo)
@@ -84,13 +83,13 @@ public class AnalisisEmocionalService {
         LocalDate fin = inicio.plusDays(OFFSET_ULTIMO_DIA_DE_SEMANA);
         return registros.stream()
             .filter(e -> !e.getFecha().isBefore(inicio) && !e.getFecha().isAfter(fin))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private static List<Emocion> soloRegistrosDeEstres(List<Emocion> registros) {
         return registros.stream()
             .filter(Emocion::indicaEstres)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private static Map<String, Long> contarPorTipo(List<Emocion> registros) {
