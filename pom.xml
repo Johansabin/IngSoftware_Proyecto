@@ -12,13 +12,18 @@
     </parent>
 
     <groupId>pe.edu.unsa</groupId>
-    <artifactId>menteencasa-bc3</artifactId>
+    <artifactId>menteencasa</artifactId>
     <version>1.0.0</version>
-    <name>MenteEnCasa BC3 Support Chat</name>
-    <description>Executable Spring Boot demo for BC3 Support Chat</description>
+    <name>MenteEnCasa</name>
+    <description>Aplicacion de apoyo emocional para estudiantes - Proyecto completo</description>
 
     <properties>
         <java.version>21</java.version>
+        <sonar.projectKey>IngSoftware_Proyecto</sonar.projectKey>
+        <sonar.projectName>IngSoftware_Proyecto</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>**/dto/**,**/entity/**,**/mapper/**,**/*Application.java</sonar.exclusions>
     </properties>
 
     <dependencies>
@@ -70,7 +75,12 @@
                 <configuration>
                   <argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
                 </configuration>
-              </plugin>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>5.8.0.7211</version>
+            </plugin>
         </plugins>
     </build>
 </project>

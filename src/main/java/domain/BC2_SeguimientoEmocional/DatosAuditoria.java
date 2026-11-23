@@ -1,6 +1,9 @@
 package BC2_SeguimientoEmocional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Objects;
 
 /**
  * Value Object de auditoría: registra cuándo se creó y cuándo se modificó por
