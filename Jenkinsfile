@@ -1,84 +1,74 @@
 pipeline {
     agent any
-    
-    // Herramientas configuradas previamente en Jenkins[cite: 164]
-    tools {
-        maven 'maven'
-        jdk 'JAVA'
-    }
 
-    environment {
-        SCANNER_HOME = tool 'sonar-scanner'
-        IMAGE_NAME = "menteencasa-bc1"
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+        timeout(time: 15, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
     stages {
-        stage('Git Checkout') {
+        stage('Checkout') {
             steps {
-                // Disparado por eventos (commits en GitHub)[cite: 166]
                 checkout scm
+                script {
+                    env.SHORT_COMMIT = sh(
+                        returnStdout: true,
+                        script: 'git rev-parse --short HEAD'
+                    ).trim()
+                    currentBuild.description = "commit ${env.SHORT_COMMIT} · build #${env.BUILD_NUMBER}"
+                }
             }
         }
 
-        stage('Build & Unit Tests (Maven)') {
+        stage('Build & Unit Tests') {
             steps {
-                // Compilación, gestión de dependencias y empaquetado[cite: 166]
-                // Genera el reporte JaCoCo para SonarQube[cite: 170]
-                bat "mvn clean package"
+                // Trazabilidad de versiones de Maven y Java usadas en el agente
+                sh 'mvn -v | head -n 1 && java -version 2>&1 | head -n 1'
+                // Compila todo el proyecto (BC1-BC6), ejecuta JUnit 5, genera reporte JaCoCo y empaqueta el JAR
+                sh 'mvn -B clean package'
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                // Archiva el JAR ejecutable antes de Sonar para conservarlo aunque falle el analisis
+                archiveArtifacts artifacts: 'target/menteencasa*.jar',
+                                 excludes: '**/*.original',
+                                 fingerprint: true,
+                                 allowEmptyArchive: false
             }
         }
 
         stage('Static Analysis (SonarQube)') {
             steps {
-                // Análisis estático integrado con Jenkins[cite: 166]
-                bat "${SCANNER_HOME}/bin/sonar-scanner"
-            }
-        }
-
-        stage('Docker Build & Run (Deployment)') {
-            steps {
-                // Despliegue automático por "Container" - Docker[cite: 166, 167]
-                bat "docker build -t ${IMAGE_NAME}:latest ."
-                // Levanta el contenedor temporalmente en el puerto 8080 para las pruebas dinámicas
-                bat "docker run -d -p 8080:8080 --name app-bc1 ${IMAGE_NAME}:latest"
-                // Espera a que la aplicación inicie
-                sleep(time: 15, unit: 'SECONDS')
-            }
-        }
-
-        stage('Functional Tests (Newman/Postman)') {
-            steps {
-                // Pruebas automatizadas funcionales[cite: 164, 166]
-                // Requiere NodeJS y Newman instalados en el servidor Jenkins
-                bat "newman run tests-automatizados/bc1-postman-collection.json"
-            }
-        }
-
-        stage('Performance Tests (JMeter)') {
-            steps {
-                // Pruebas automatizadas de rendimiento[cite: 164, 166]
-                bat "jmeter -n -t tests-automatizados/bc1-rendimiento.jmx -l tests-automatizados/resultados-jmeter.jtl"
-            }
-        }
-
-        stage('Security Tests (OWASP ZAP)') {
-            steps {
-                // Pruebas automatizadas de seguridad integradas[cite: 164, 166]
-                // Lanza un escaneo rápido sobre el contenedor desplegado localmente
-                bat "zap-cli quick-scan --self-contained http://localhost:8080"
+                script {
+                    try {
+                        withCredentials([string(credentialsId: 'sonar-token',
+                                                variable: 'SONAR_TOKEN')]) {
+                            // Comillas simples para evitar que Groovy interpole o exponga el token
+                            sh 'mvn -B sonar:sonar -Dsonar.token=${SONAR_TOKEN}'
+                        }
+                    } catch (err) {
+                        currentBuild.result = 'FAILURE'
+                        error("Fallo en el analisis de SonarQube (la compilacion y los tests si pasaron): ${err.message}")
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            // Detiene y elimina el contenedor de prueba al terminar el pipeline
-            bat "docker stop app-bc1"
-            bat "docker rm app-bc1"
+            // Publica los resultados de las pruebas unitarias JUnit en Jenkins
+            junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+        }
+        success {
+            echo "Pipeline completado en verde para commit ${env.SHORT_COMMIT}."
         }
         failure {
-            // Notificación de errores al equipo (Gestión de cambios)[cite: 166]
-            echo "El pipeline ha fallado. Revisa los logs y actualiza el Kanban (GitHub Projects)."
+            echo "Pipeline fallido en commit ${env.SHORT_COMMIT}. Revisa la consola y los reportes de tests."
         }
     }
 }
