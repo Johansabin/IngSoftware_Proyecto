@@ -2,6 +2,7 @@ package BC2_SeguimientoEmocional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -53,40 +54,45 @@ class AnalisisEmocionalServiceTest {
     }
 
     @Test
-    void detectarPatrones_tresRegistrosDelMismoTipo_registraCantidadDePatrones() {
+    void detectarPatrones_tresRegistrosDelMismoTipo_devuelveYRegistraPatrones() {
         // Arrange
         agregarEstres(3);
 
         // Act
-        servicio.detectarPatronesDeEstres(bitacora);
+        List<String> patrones = servicio.detectarPatronesDeEstres(bitacora);
 
         // Assert
+        assertEquals(List.of("estres"), patrones);
         assertEquals(
                 List.of("Se detectaron 1 patron(es) de estres sostenido"), mensajesRegistrados());
     }
 
     @Test
-    void detectarPatrones_dosRegistros_registraQueNoHayPatrones() {
+    void detectarPatrones_dosRegistros_devuelveListaVacia() {
         // Arrange
         agregarEstres(2);
 
         // Act
-        servicio.detectarPatronesDeEstres(bitacora);
+        List<String> patrones = servicio.detectarPatronesDeEstres(bitacora);
 
         // Assert
+        assertTrue(patrones.isEmpty());
         assertEquals(
                 List.of("No se detectaron patrones de estres sostenido"), mensajesRegistrados());
     }
 
     @Test
-    void generarResumen_registraMensajeGenericoSinDatosEmocionales() {
+    void generarResumen_devuelveResumenYRegistraMensajeGenericoSinDatosEmocionales() {
         // Arrange
         agregarEstres(1);
 
         // Act
-        servicio.generarResumen(bitacora, LUNES);
+        ResumenSemanal resumen = servicio.generarResumen(bitacora, LUNES);
 
-        // Assert: el log no debe volcar el ResumenSemanal ni las emociones del estudiante
+        // Assert: devuelve el resultado calculado y el log no expone emociones del estudiante
+        assertEquals(9.0, resumen.getPromedioEstres(), 0.001);
+        assertEquals(0, resumen.getDiasDePaz());
+        assertEquals(LUNES, resumen.getSemanaInicio());
         assertEquals(List.of("Resumen semanal generado"), mensajesRegistrados());
     }
 

@@ -31,10 +31,11 @@ public class AnalisisEmocionalService {
     private static final int OFFSET_ULTIMO_DIA_DE_SEMANA = 6;
 
     /**
-     * Genera el resumen semanal de una bitacora mediante una tuberia de
-     * funciones puras y publica el resultado del analisis.
+     * Genera y devuelve el resumen semanal de una bitacora mediante una tuberia
+     * de funciones puras, registrando un evento generico en el log sin datos
+     * emocionales del estudiante.
      */
-    public void generarResumen(BitacoraEmocional bitacora, LocalDate semana) {
+    public ResumenSemanal generarResumen(BitacoraEmocional bitacora, LocalDate semana) {
         Objects.requireNonNull(bitacora, "La bitacora es obligatoria");
         Objects.requireNonNull(semana, "La semana es obligatoria");
 
@@ -47,15 +48,16 @@ public class AnalisisEmocionalService {
                 contarDiasDePaz(registros),
                 inicioDeSemana(semana));
 
-        obtenerRegistrosDeLaSemana.andThen(construirResumen).apply(bitacora);
+        ResumenSemanal resumen = obtenerRegistrosDeLaSemana.andThen(construirResumen).apply(bitacora);
         registrarResumen();
+        return resumen;
     }
 
     /**
-     * Detecta patrones de estres sostenido mediante una tuberia de funciones
-     * puras que filtran, agrupan y evaluan los registros de la bitacora.
+     * Detecta y devuelve los tipos de emocion con patron de estres sostenido
+     * mediante una tuberia de funciones puras.
      */
-    public void detectarPatronesDeEstres(BitacoraEmocional bitacora) {
+    public List<String> detectarPatronesDeEstres(BitacoraEmocional bitacora) {
         Objects.requireNonNull(bitacora, "La bitacora es obligatoria");
 
         Function<BitacoraEmocional, List<Emocion>> obtenerRegistrosDeEstres =
@@ -76,6 +78,7 @@ public class AnalisisEmocionalService {
             .apply(bitacora);
 
         registrarPatrones(patrones);
+        return patrones;
     }
 
     private static List<Emocion> filtrarPorSemana(List<Emocion> registros, LocalDate semana) {
