@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +27,9 @@ import java.util.UUID;
 @RequestMapping("/api/modules")
 public class MenteEnCasaModulesController {
 
+    private static final String BOUNDED_CONTEXT_KEY = "boundedContext";
+    private static final ZoneId ZONA = ZoneId.of("America/Lima");
+
     @GetMapping("/bc1-authentication")
     public Map<String, Object> authenticationDemo() {
         CredencialesInstitucionales credenciales = new CredencialesInstitucionales("20261234", "hash-demo");
@@ -33,7 +37,7 @@ public class MenteEnCasaModulesController {
         Sesion sesion = SesionFactory.registrarSesion(credenciales.getCodigoUniversitario());
 
         return Map.of(
-                "boundedContext", "BC1 - Autenticacion",
+                BOUNDED_CONTEXT_KEY, "BC1 - Autenticacion",
                 "codigoValido", credenciales.esCodigoValido(),
                 "sesionId", sesion.getId(),
                 "codigoUsuario", sesion.getCodigoUsuario(),
@@ -45,7 +49,7 @@ public class MenteEnCasaModulesController {
     @GetMapping("/bc2-emotional-tracking")
     public Map<String, Object> emotionalTrackingDemo() {
         UUID estudianteId = UUID.fromString("33333333-3333-3333-3333-333333333333");
-        LocalDate hoy = LocalDate.now();
+        LocalDate hoy = LocalDate.now(ZONA);
         BitacoraEmocional bitacora = new BitacoraEmocional(estudianteId);
         bitacora.agregarRegistro(new Emocion(hoy, "estres", new EscalaEmocional(8), "Carga academica alta"));
         bitacora.agregarRegistro(new Emocion(hoy.minusDays(1), "calma", new EscalaEmocional(3), "Descanso adecuado"));
@@ -53,7 +57,7 @@ public class MenteEnCasaModulesController {
         ResumenSemanal resumen = bitacora.obtenerResumen(hoy);
 
         return Map.of(
-                "boundedContext", "BC2 - Seguimiento Emocional",
+                BOUNDED_CONTEXT_KEY, "BC2 - Seguimiento Emocional",
                 "bitacoraId", bitacora.getId(),
                 "estudianteId", bitacora.getEstudianteId(),
                 "registros", bitacora.getRegistros().size(),
@@ -69,7 +73,7 @@ public class MenteEnCasaModulesController {
                 new Recomendacion("Organizacion semanal", "Separar tareas academicas por prioridad.", "Habitos"));
 
         return Map.of(
-                "boundedContext", "BC4 - Recomendaciones",
+                BOUNDED_CONTEXT_KEY, "BC4 - Recomendaciones",
                 "total", recomendaciones.size(),
                 "recomendaciones", recomendaciones.stream()
                         .map(recomendacion -> Map.of(
@@ -86,10 +90,10 @@ public class MenteEnCasaModulesController {
         Recordatorio recordatorio = new Recordatorio(
                 estudianteId,
                 "Registrar estado emocional del dia",
-                LocalDateTime.now().plusHours(2));
+                LocalDateTime.now(ZONA).plusHours(2));
 
         return Map.of(
-                "boundedContext", "BC5 - Notificaciones",
+                BOUNDED_CONTEXT_KEY, "BC5 - Notificaciones",
                 "recordatorioId", recordatorio.getId(),
                 "estudianteId", recordatorio.getEstudianteId(),
                 "mensaje", recordatorio.getMensaje(),
@@ -107,7 +111,7 @@ public class MenteEnCasaModulesController {
         politica.agregarConsentimiento(consentimiento);
 
         return Map.of(
-                "boundedContext", "BC6 - Privacidad y Seguridad",
+                BOUNDED_CONTEXT_KEY, "BC6 - Privacidad y Seguridad",
                 "politicaId", politica.getId(),
                 "version", politica.getVersion(),
                 "consentimientos", politica.getConsentimientos().size(),

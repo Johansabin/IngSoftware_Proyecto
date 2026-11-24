@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 
 class EmocionTest {
 
@@ -18,9 +17,9 @@ class EmocionTest {
         // Arrange
         EscalaEmocional escala = new EscalaEmocional(5);
 
-        // Arrange & Act & Assert
+        // Act & Assert
         assertThrows(NullPointerException.class,
-                () -> new Emocion(null, "estres", new EscalaEmocional(5), "x"));
+                () -> new Emocion(null, "estres", escala, "x"));
     }
 
     @Test
@@ -28,9 +27,9 @@ class EmocionTest {
         // Arrange
         EscalaEmocional escala = new EscalaEmocional(5);
 
-        // Arrange & Act & Assert
+        // Act & Assert
         assertThrows(NullPointerException.class,
-                () -> new Emocion(FECHA, null, new EscalaEmocional(5), "x"));
+                () -> new Emocion(FECHA, null, escala, "x"));
     }
 
     @Test
@@ -38,9 +37,9 @@ class EmocionTest {
         // Arrange
         EscalaEmocional escala = new EscalaEmocional(5);
 
-        // Arrange & Act & Assert
+        // Act & Assert
         assertThrows(IllegalArgumentException.class,
-                () -> new Emocion(FECHA, "   ", new EscalaEmocional(5), "x"));
+                () -> new Emocion(FECHA, "   ", escala, "x"));
     }
 
     @Test

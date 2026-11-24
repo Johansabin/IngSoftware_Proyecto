@@ -5,6 +5,8 @@ import application.BC3_SupportChat.SendMessageRequest;
 import application.BC3_SupportChat.StartChatRequest;
 import BC3_SoporteChat.ChatSession;
 import BC3_SoporteChat.SenderRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Component
 public class SupportChatDemoRunner implements CommandLineRunner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SupportChatDemoRunner.class);
 
     private final ChatSessionAppService chatSessionAppService;
 
@@ -30,9 +34,9 @@ public class SupportChatDemoRunner implements CommandLineRunner {
                 SenderRole.STUDENT));
 
         ChatSession chatSession = chatSessionAppService.getChat(chatId);
-        System.out.println("BC3 Support Chat running");
-        System.out.println("Demo chat id: " + chatSession.getId());
-        System.out.println("Demo psychologist id: " + chatSession.getPsychologistId());
-        System.out.println("Demo messages: " + chatSession.getMessages().size());
+        LOGGER.info("BC3 Support Chat running");
+        LOGGER.info("Demo chat id: {}", chatSession.getId());
+        LOGGER.info("Demo psychologist id: {}", chatSession.getPsychologistId());
+        LOGGER.info("Demo messages: {}", chatSession.getMessages().size());
     }
 }

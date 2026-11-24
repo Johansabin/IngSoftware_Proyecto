@@ -1,12 +1,14 @@
 package BC3_SoporteChat;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Message {
 
     private static final int MAX_CONTENT_LENGTH = 1000;
+    private static final ZoneId ZONA = ZoneId.of("America/Lima");
 
     private final UUID id;
     private final String content;
@@ -14,7 +16,7 @@ public class Message {
     private final LocalDateTime timestamp;
 
     public Message(String content, SenderRole senderRole) {
-        this(UUID.randomUUID(), content, senderRole, LocalDateTime.now());
+        this(UUID.randomUUID(), content, senderRole, LocalDateTime.now(ZONA));
     }
 
     public Message(UUID id, String content, SenderRole senderRole, LocalDateTime timestamp) {

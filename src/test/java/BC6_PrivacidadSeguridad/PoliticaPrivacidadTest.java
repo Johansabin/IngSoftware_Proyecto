@@ -138,10 +138,11 @@ class PoliticaPrivacidadTest {
     void getConsentimientos_listaNoModificable() {
         // Arrange
         Consentimiento consentimiento = new Consentimiento(estudianteId, true);
+        var consentimientos = politica.getConsentimientos();
 
         // Act & Assert
         assertThrows(UnsupportedOperationException.class,
-                () -> politica.getConsentimientos().add(consentimiento));
+                () -> consentimientos.add(consentimiento));
     }
 
     @Test
