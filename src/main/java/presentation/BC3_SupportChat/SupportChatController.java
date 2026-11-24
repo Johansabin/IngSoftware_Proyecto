@@ -3,7 +3,6 @@ package presentation.BC3_SupportChat;
 import application.BC3_SupportChat.ChatSessionAppService;
 import application.BC3_SupportChat.SendMessageRequest;
 import application.BC3_SupportChat.StartChatRequest;
-import BC3_SoporteChat.ChatSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

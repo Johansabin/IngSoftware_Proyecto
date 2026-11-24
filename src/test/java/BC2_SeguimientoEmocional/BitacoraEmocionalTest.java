@@ -61,7 +61,7 @@ class BitacoraEmocionalTest {
         List<Emocion> registros = bitacora.getRegistros();
 
         // Act & Assert
-        assertThrows(UnsupportedOperationException.class, () -> bitacora.getRegistros().add(e));
+        assertThrows(UnsupportedOperationException.class, () -> registros.add(e));
     }
 
     @Test
